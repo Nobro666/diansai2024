@@ -39,76 +39,14 @@
 #include "stdio.h"
 #include "key.h"
 #include "flash.h"
-/*
- * =======================================================
- * 硬件引脚映射 (Hardware Pinout Map)
- * =======================================================
- * 
- * ----------------------------
- * LED控制引脚 (LED Control Pins)
- * ----------------------------
- * PA18  -> LED1        // 指示灯1
- * PA17  -> LED2        // 指示灯2
- * PA16  -> LED3        // 指示灯3
- * PA10  -> LED4        // 指示灯4
- * PA9   -> LED5        // 指示灯5
- * PA8   -> LED6        // 指示灯6
- * PA7   -> LED7        // 指示灯7
- * PA6   -> LED8        // 指示灯8
- * PA11  -> ERR_LED     // 错误状态指示灯
- * PA12  -> KEY_LED     // 按键状态指示灯
- * 
- * ----------------------------
- * 用户输入引脚 (User Input Pin)
- * ----------------------------
- * PA22  -> KEY         // 用户按键输入
- * 
- * ----------------------------
- * 无MCU传感器接口
- * (Dedicated Sensor Interface)
- * ----------------------------
- * PA15  -> AD0         // 地址输入通道0
- * PA14  -> AD1         // 地址输入通道1
- * PA13  -> AD2         // 地址输入通道2
- * PA26  -> ERR         // 传感器错误信号输入
- * PA27  -> OUT         // 传感器模拟量输出信号(接入ADC)
- * 
- * =======================================================
- */
+#include "control.h"
 
+extern unsigned short Anolog[8] ;    // 存储当前模拟量值的数组
+extern unsigned short white[8] ;     // 存储白色校准值的数组 
+extern unsigned short black[8];     // 存储黑色校准值的数组
+extern unsigned short Normal[8];          // 归一化值数组
+extern No_MCU_Sensor sensor;
 
-
-/*                  模拟量转数字量的滞回比较器(施密特触发器)示意图               
- *          /\
- *   Digital |     
- *           |
- *        0  |                 +----------------+--------------
- *           |                 |                |
- *           |                 |                |
- *           |                 |                |
- *           |                 |                |
- *           |                 |                |
- *           |                 |                |
- *           |                 |                |
- *           |                 |                |     
- *         1 |    -------------+----------------+
- *      -----+----------------------------------------------------------> analog
- *           |   0             1/3              2/3            1 
- *           |   黑            灰黑             灰白            白
- *               Calibrated    Gray             Gray           Calibrated
- *               black         black            white          white
- */
-
-
-
-// 全局变量定义
-unsigned short Anolog[8] = {0};    // 存储当前模拟量值的数组
-unsigned short white[8] = {0};     // 存储白色校准值的数组 
-unsigned short black[8] = {0};     // 存储黑色校准值的数组
-unsigned short Normal[8];          // 归一化值数组
-
-No_MCU_Sensor sensor;              // 传感器数据结构体
-unsigned char Digtal;              // 数字输出值
 
 int main(void)
 {
@@ -146,67 +84,10 @@ int main(void)
 		
     /* 主应用程序循环 */
     while (1) {
-        if (state.value == KEY_IDLE||state.value == KEY_DISABLE||state.value == KEY_WAIT_LOSS ) {
-            // 正常操作模式(非校准状态)
-            
-            // 执行无时基依赖的传感器任务
-            No_Mcu_Ganv_Sensor_Task_Without_tick(&sensor);
-            
-            // 从传感器获取当前模拟量值
-            Get_Anolog_Value(&sensor, Anolog);
-            
-            // 将模拟量转换为数字输出
-            Digtal = Get_Digtal_For_User(&sensor);
-					
-        } else {
-            // 校准模式 - 将数字输出置0，八路LED灯关闭
-            Digtal = 0;
-        }
-				
-        // 处理按键输入
-        Key_Process();
-        
-           // 假设定义
-           char tx_buff[128];  // 发送缓冲区，不用太大（每行最多约60字节） 
-           // 发送数字量（8位拆分为8个独立位）
-           sprintf(tx_buff, "Digtal %d-%d-%d-%d-%d-%d-%d-%d\r\n",(Digtal >> 0) & 0x01,(Digtal >> 1) & 0x01,(Digtal >> 2) & 0x01,(Digtal >> 3) & 0x01,(Digtal >> 4) & 0x01,(Digtal >> 5) & 0x01,(Digtal >> 6) & 0x01,(Digtal >> 7) & 0x01);
-           uart0_send_string(tx_buff);
-
-           // 发送模拟量（全部8个通道）
-           sprintf(tx_buff, "Anolog %u-%u-%u-%u-%u-%u-%u-%u\r\n",Anolog[0], Anolog[1], Anolog[2], Anolog[3],Anolog[4], Anolog[5], Anolog[6], Anolog[7]);
-           uart0_send_string(tx_buff);
-
-
-        // 更新KEY和ERR LED的状态
-        LED_KEY_Blink_Update();
+        Control();
     }
 }
-/**
- * @brief 外部中断处理函数（CLK和按键）
- * @note  检测到有效按键后设置key_pressed标志
- */
 
-
- 
-void GROUP1_IRQHandler(void)
-{
-	    // 读取Group1的中断寄存器并清除中断标志位
-    uint32_t pending = DL_GPIO_getPendingInterrupt(GPIOA);
-	
-    if(pending == GRAY_IN_IN_KEY_IIDX){
-            /* 防抖处理 */
-            if ((Tick - last_key_time) < DEBOUNCE_TIME_MS) {
-                return;
-            }
-            /* 确认按键按下 */
-            if (DL_GPIO_readPins(GRAY_IN_PORT, GRAY_IN_IN_KEY_PIN) == 0) {
-                key_pressed = 1;
-								long_pressed_key_time=Tick;
-                last_key_time = Tick;
-            }
-    }
-
-}
 
 
 

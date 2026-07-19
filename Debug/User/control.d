@@ -1,6 +1,6 @@
 # FIXED
 
-main.o: ../main.c \
+User/control.o: ../User/control.c \
  ti_msp_dl_config.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h \
@@ -91,10 +91,11 @@ main.o: ../main.c \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/uart.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h \
+ ../User/control.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h
+ C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h:
@@ -185,7 +186,8 @@ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/led.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/uart.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h:
+../User/control.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h:

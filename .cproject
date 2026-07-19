@@ -100,7 +100,7 @@
                         </toolChain>
                     </folderInfo>
                     <sourceEntries>
-                        <entry excluding="User|Drivers/WIT|Drivers/VL53L0X|Drivers/Ultrasonic_GPIO|Drivers/Ultrasonic_Capture|Drivers/OLED_Software_SPI|Drivers/OLED_Software_I2C|Drivers/OLED_Hardware_SPI|Drivers/LSM6DSV16X|Drivers/BNO08X_UART_RVC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="Drivers/WIT|Drivers/VL53L0X|Drivers/Ultrasonic_GPIO|Drivers/Ultrasonic_Capture|Drivers/OLED_Software_SPI|Drivers/OLED_Software_I2C|Drivers/OLED_Hardware_SPI|Drivers/LSM6DSV16X|Drivers/BNO08X_UART_RVC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                     </sourceEntries>
                 </configuration>
             </storageModule>

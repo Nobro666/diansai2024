@@ -1,329 +1,144 @@
-#include "headfile.h"
+#include "ti_msp_dl_config.h"
+#include "No_Mcu_Ganv_Grayscale_Sensor_Config.h"
+#include "delay.h"
+#include "adc.h"
+#include "led.h"
+#include "uart.h"
+#include "stdio.h"
+#include "key.h"
+#include "flash.h"
+#include "control.h"
+/*
+ * =======================================================
+ * 硬件引脚映射 (Hardware Pinout Map)
+ * =======================================================
+ * 
+ * ----------------------------
+ * LED控制引脚 (LED Control Pins)
+ * ----------------------------
+ * PA18  -> LED1        // 指示灯1
+ * PA17  -> LED2        // 指示灯2
+ * PA16  -> LED3        // 指示灯3
+ * PA10  -> LED4        // 指示灯4
+ * PA9   -> LED5        // 指示灯5
+ * PA8   -> LED6        // 指示灯6
+ * PA7   -> LED7        // 指示灯7
+ * PA6   -> LED8        // 指示灯8
+ * PA11  -> ERR_LED     // 错误状态指示灯
+ * PA12  -> KEY_LED     // 按键状态指示灯
+ * 
+ * ----------------------------
+ * 用户输入引脚 (User Input Pin)
+ * ----------------------------
+ * PA22  -> KEY         // 用户按键输入
+ * 
+ * ----------------------------
+ * 无MCU传感器接口
+ * (Dedicated Sensor Interface)
+ * ----------------------------
+ * PA15  -> AD0         // 地址输入通道0
+ * PA14  -> AD1         // 地址输入通道1
+ * PA13  -> AD2         // 地址输入通道2
+ * PA26  -> ERR         // 传感器错误信号输入
+ * PA27  -> OUT         // 传感器模拟量输出信号(接入ADC)
+ * 
+ * =======================================================
+ */
 
-uint16_t turn = 0;
-uint16_t baisei_time = 0;
-uint16_t heisei_time = 0;
-uint8_t Line_flag_task2 = 0;
-uint16_t baisei_time_task2 = 0;
-uint16_t baisetime_high = 10;
 
-void Trace(void)
+
+/*                  模拟量转数字量的滞回比较器(施密特触发器)示意图               
+ *          /\
+ *   Digital |     
+ *           |
+ *        0  |                 +----------------+--------------
+ *           |                 |                |
+ *           |                 |                |
+ *           |                 |                |
+ *           |                 |                |
+ *           |                 |                |
+ *           |                 |                |
+ *           |                 |                |
+ *           |                 |                |     
+ *         1 |    -------------+----------------+
+ *      -----+----------------------------------------------------------> analog
+ *           |   0             1/3              2/3            1 
+ *           |   黑            灰黑             灰白            白
+ *               Calibrated    Gray             Gray           Calibrated
+ *               black         black            white          white
+ */
+
+
+
+// 全局变量定义
+unsigned short Anolog[8] = {0};    // 存储当前模拟量值的数组
+unsigned short white[8] = {0};     // 存储白色校准值的数组 
+unsigned short black[8] = {0};     // 存储黑色校准值的数组
+unsigned short Normal[8];          // 归一化值数组
+
+No_MCU_Sensor sensor;              // 传感器数据结构体
+unsigned char Digtal;              // 数字输出值
+
+void Control(void)
 {
-    Get_Light_TTL();
-    if(L4==0&&L3==0&&L2==0&&L1==0&&R1==0&&R2==0&&R3==0&&R4==0)//急停
-    {
-        heisei_time ++;
-        if(baisei_time >= 20)
-        {
-            baisei_time = 0;
-            Line_flag = 1;
+    if (state.value == KEY_IDLE||state.value == KEY_DISABLE||state.value == KEY_WAIT_LOSS ) {
+            // 正常操作模式(非校准状态)
+            
+            // 执行无时基依赖的传感器任务
+            No_Mcu_Ganv_Sensor_Task_Without_tick(&sensor);
+            
+            // 从传感器获取当前模拟量值
+            Get_Anolog_Value(&sensor, Anolog);
+            
+            // 将模拟量转换为数字输出
+            Digtal = Get_Digtal_For_User(&sensor);
+					
+        } else {
+            // 校准模式 - 将数字输出置0，八路LED灯关闭
+            Digtal = 0;
         }
-    }
-    else if(L4==1&&L3==1&&L2==1&&L1==1&&R1==1&&R2==1&&R3==1&&R4==1)//全白直走
-    {
-        baisei_time++;
-        if(baisei_time >= 45)
-        {
-            baisei_time = 0;
-            Line_flag = 0;
-        }
-        baisei_time_task2++;
-        if(baisei_time_task2 >= 100)
-        {
-            baisei_time_task2 = 0;
-            Line_flag_task2 = 0;
-        }
-        //motor_set_4(basespeed, basespeed);
-    }
-    else
-    {
-        if(L1==0&&R1==0)
-        {
-            motor_set_4(basespeed, basespeed);
-        }
+				
+        // 处理按键输入
+        Key_Process();
         
-        else if(L4==0&&L3==0)// 0011 1111
-        {
-            motor_set_4(basespeed - 0.17, basespeed + 0.23);
-        }
-        else if(R3==0&&R4==0)// 1111 1100
-        {
-            motor_set_4(basespeed + 0.23, basespeed - 0.17);
-        }
+           // 假设定义
+           char tx_buff[128];  // 发送缓冲区，不用太大（每行最多约60字节） 
+           // 发送数字量（8位拆分为8个独立位）
+           sprintf(tx_buff, "Digtal %d-%d-%d-%d-%d-%d-%d-%d\r\n",(Digtal >> 0) & 0x01,(Digtal >> 1) & 0x01,(Digtal >> 2) & 0x01,(Digtal >> 3) & 0x01,(Digtal >> 4) & 0x01,(Digtal >> 5) & 0x01,(Digtal >> 6) & 0x01,(Digtal >> 7) & 0x01);
+           uart0_send_string(tx_buff);
 
-        else if(L4==0&&L3==1)//0111 1111
-        {
-            motor_set_4(basespeed - 0.17, basespeed + 0.28);
-        }
-        else if(R4==0&&R3==1)//1111 1110
-        {
-            motor_set_4(basespeed + 0.28, basespeed - 0.17);
-        }
+           // 发送模拟量（全部8个通道）
+           sprintf(tx_buff, "Anolog %u-%u-%u-%u-%u-%u-%u-%u\r\n",Anolog[0], Anolog[1], Anolog[2], Anolog[3],Anolog[4], Anolog[5], Anolog[6], Anolog[7]);
+           uart0_send_string(tx_buff);
 
-        else if(L1==0&&R1==1)// 1110 1111
-        {
-            motor_set_4(basespeed - 0.17, basespeed + 0.08);
-        }
-        else if(L1==1&&R1==0)// 1111 0111
-        {
-            motor_set_4(basespeed + 0.08, basespeed - 0.17);
-        }
 
-        else if(L2==0&&L1==0)// 1100 1111
-        {
-            motor_set_4(basespeed - 0.17, basespeed + 0.18);
-        }
-        else if(R1==0&&R2==0)// 1111 0011
-        {
-            motor_set_4(basespeed + 0.18, basespeed - 0.17);
-        }
-
-        else if(L3==0&&L2==0)// 1001 1111
-        {
-            motor_set_4(basespeed - 0.17, basespeed + 0.23);
-        }
-        else if(R2==0&&R3==0)// 1111 1001
-        {
-            motor_set_4(basespeed + 0.23, basespeed - 0.17);
-        }
-    }
-    delay_ms(10);
+        // 更新KEY和ERR LED的状态
+        LED_KEY_Blink_Update();
 }
 
-void Trace_2(void)
+/**
+ * @brief 外部中断处理函数（CLK和按键）
+ * @note  检测到有效按键后设置key_pressed标志
+ */
+
+
+ 
+void GROUP1_IRQHandler(void)
 {
-    Get_Light_TTL();
-    if(L4==0&&L3==0&&L2==0&&L1==0&&R1==0&&R2==0&&R3==0&&R4==0)//急停
-    {
-        motor_set(0, 0);
-        delay_ms(1000);
+	    // 读取Group1的中断寄存器并清除中断标志位
+    uint32_t pending = DL_GPIO_getPendingInterrupt(GPIOA);
+	
+    if(pending == GRAY_IN_IN_KEY_IIDX){
+            /* 防抖处理 */
+            if ((Tick - last_key_time) < DEBOUNCE_TIME_MS) {
+                return;
+            }
+            /* 确认按键按下 */
+            if (DL_GPIO_readPins(GRAY_IN_PORT, GRAY_IN_IN_KEY_PIN) == 0) {
+                key_pressed = 1;
+								long_pressed_key_time=Tick;
+                last_key_time = Tick;
+            }
     }
-    else if(L4==1&&L3==1&&L2==1&&L1==1&&R1==1&&R2==1&&R3==1&&R4==1)//全白直走
-    {
-        motor_set(basespeed, basespeed);
-    }
-    else
-    {
-        if(L1==0&&R1==0)
-        {
-            motor_set(basespeed, basespeed);
-        }
-        
-        else if(L4==0&&L3==0)// 0011 1111
-        {
-            motor_set(basespeed, basespeed + 25);
-        }
-        else if(R3==0&&R4==0)// 1111 1100
-        {
-            motor_set(basespeed + 25, basespeed);
-        }
 
-        else if(L4==0&&L3==1)//0111 1111
-        {
-            motor_set(basespeed, basespeed + 30);
-        }
-        else if(R4==0&&R3==1)//1111 1110
-        {
-            motor_set(basespeed + 30, basespeed);
-        }
-
-        else if(L1==0&&R1==1)// 1110 1111
-        {
-            motor_set(basespeed, basespeed + 5);
-        }
-        else if(L1==1&&R1==0)// 1111 0111
-        {
-            motor_set(basespeed + 5, basespeed);
-        }
-
-        else if(L2==0&&L1==0)// 1100 1111
-        {
-            motor_set(basespeed, basespeed + 15);
-        }
-        else if(R1==0&&R2==0)// 1111 0011
-        {
-            motor_set(basespeed + 15, basespeed);
-        }
-
-        else if(L3==0&&L2==0)// 1001 1111
-        {
-            motor_set(basespeed, basespeed + 25);
-        }
-        else if(R2==0&&R3==0)// 1111 1001
-        {
-            motor_set(basespeed + 25, basespeed);
-        }
-    }
-    delay_ms(10);
-}
-
-void Trace_task_3(void) //速度0.25
-{
-    
-    Get_Light_TTL();
-    if(L4==0&&L3==0&&L2==0&&L1==0&&R1==0&&R2==0&&R3==0&&R4==0)//急停
-    {
-        heisei_time ++;
-        if(baisei_time >= 20)
-        {
-            baisei_time = 0;
-            Line_flag = 1;
-        }
-    }
-    else if(L4==1&&L3==1&&L2==1&&L1==1&&R1==1&&R2==1&&R3==1&&R4==1)//全白直走
-    {
-        baisei_time++;
-        if(baisei_time >= 45)
-        {
-            baisei_time = 0;
-            Line_flag = 0;
-        }
-        baisei_time_task2++;
-        if(baisei_time_task2 >= 10)
-        {
-            baisei_time_task2 = 0;
-            Line_flag_task2 = 0;
-        }
-        //motor_set_4(basespeed, basespeed);
-    }
-    else
-    {
-        if(L1==0&&R1==0)
-        {
-            motor_set_4(basespeed, basespeed);
-        }
-        
-        else if(L4==0&&L3==0)// 0011 1111
-        {
-            motor_set_4(basespeed - 0.18, basespeed + 0.36);
-        }
-        else if(R3==0&&R4==0)// 1111 1100
-        {
-            motor_set_4(basespeed + 0.36, basespeed - 0.18);
-        }
-
-        else if(L4==0&&L3==1)//0111 1111
-        {
-            motor_set_4(basespeed - 0.27, basespeed + 0.55);
-        }
-        else if(R4==0&&R3==1)//1111 1110
-        {
-            motor_set_4(basespeed + 0.55, basespeed - 0.27);
-        }
-
-        else if(L1==0&&R1==1)// 1110 1111
-        {
-            motor_set_4(basespeed - 0.15, basespeed + 0.08);
-        }
-        else if(L1==1&&R1==0)// 1111 0111
-        {
-            motor_set_4(basespeed + 0.08, basespeed - 0.15);
-        }
-
-        else if(L2==0&&L1==0)// 1100 1111
-        {
-            motor_set_4(basespeed - 0.15, basespeed + 0.18);
-        }
-        else if(R1==0&&R2==0)// 1111 0011
-        {
-            motor_set_4(basespeed + 0.18, basespeed - 0.15);
-        }
-
-        else if(L3==0&&L2==0)// 1001 1111
-        {
-            motor_set_4(basespeed - 0.20, basespeed + 0.26);
-        }
-        else if(R2==0&&R3==0)// 1111 1001
-        {
-            motor_set_4(basespeed + 0.26, basespeed - 0.20);
-        }
-    }
-    delay_ms(10);
-}
-
-void shengguang(void)
-{
-    if(shengguang_flag == 0)
-    {
-        BUZZER_ON
-        LED_BLUE_ON
-        LED_zzk_ON
-        shengguang_flag = 1;
-    }
-}
-
-
-void duanlu(void)
-{
-    //获取当前角度
-    //atk_ms901m_get_attitude(&attitude_dat, 5);
-    atk_ms901m_get_attitude(&attitude_dat, 5);
-    angle.now = attitude_dat.yaw;
-    float offset = angle.now - angle.target;
-    //计算当前角度
-    pid_cal(&angle);
-
-    //方案1
-    if(offset <= 0 ) offset = -offset;
-    if(offset < 1.0)
-    {
-        motor_set_4(basespeed, basespeed);
-    }
-    else
-    {
-        float SpeedL = basespeed - angle.out * 0.001825;
-        float SpeedR = basespeed + angle.out * 0.001825;
-        if(SpeedL <= 0)         SpeedL = 0;
-        else if(SpeedL >= 1)  SpeedL = 1;
-        if(SpeedR <= 0)         SpeedR = 0;
-        else if(SpeedR >= 1)  SpeedR = 1;
-        motor_set_4(SpeedL, SpeedR);
-    Get_Light_TTL();
-    delay_ms(10);
-    }
-}
-
-void Trace_pid_test(void)
-{
-    Get_Light_TTL_trace();
-
-    float bianhua = (-12.0)*L4 + (-7.0)*L3 + (-4.0)*L2 + (-1.0)*L1 + (1.0)*R1 + (4.0)*R2 + (7.0)*R3 + (12.0)*R4;  //0.3适用
-    trace_pid.now = bianhua;
-    trace_pid.target = 0;
-    pid_cal_trace(&trace_pid);
-
-    float SpeedL = basespeed - trace_pid.out * 0.0021825;
-    float SpeedR = basespeed + trace_pid.out * 0.0021825;
-    if(SpeedL <= 0)         SpeedL = 0;
-    else if(SpeedL >= 1)  SpeedL = 1;
-    if(SpeedR <= 0)         SpeedR = 0;
-    else if(SpeedR >= 1)  SpeedR = 1;
-
-    if(L4==0 && L3==0 && L2==0 && L1==0 && R1==0 && R2==0 && R3==0 && R4==0)//全是白色
-    {
-        baisei_time ++;
-        if(baisei_time >= 5)
-        {
-            baisei_time = 0;
-            Line_flag = 0;
-        }
-        baisei_time_task2 ++;
-        if(baisei_time_task2 >= 8)
-        {
-            baisei_time_task2 = 0;
-            Line_flag_task2 = 0;
-        }
-    }
-    else if(L4==1 || L3==1 || L2==1 || L1==1 || R1==1 || R2==1 || R3==1 || R4==1)
-    {
-        heisei_time ++;
-        if(heisei_time >= 15)
-        {
-            Line_flag = 1;
-            heisei_time = 0;
-        }
-    }
-    
-    motor_set_4(SpeedL, SpeedR);
-    delay_ms(10);
 }

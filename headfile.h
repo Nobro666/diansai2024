@@ -3,7 +3,7 @@
 
 #include "oled_hardware_i2c.h"
 #include "delay.h"
-#include "isr.h"
+// #include "isr.h"
 #include "motor.h"
 // #include "gpio_zzk.h"
 // #include "huidu5.h"
@@ -11,7 +11,7 @@
 
 
 #include "control.h"
-#include "pid.h"
+// #include "pid.h"
 
 //LED控制宏定义
 #define LED_RED_ON      DL_GPIO_setPins(LEDS_PORT, LEDS_LED2_RED_PIN);
