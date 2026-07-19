@@ -78,7 +78,7 @@ GPIO2.associatedPins[2].pin.$assign = "PA25";
 
 GPIO3.$name                         = "LED";
 GPIO3.associatedPins[0].$name       = "KEY";
-GPIO3.associatedPins[0].pin.$assign = "PB13";
+GPIO3.associatedPins[0].pin.$assign = "PB20";
 
 GPIO4.$name                              = "GRAY_IN";
 GPIO4.associatedPins[0].$name            = "IN_KEY";
@@ -199,7 +199,7 @@ ADC121.DMA_CHANNEL.peripheral.$suggestSolution = "DMA_CH0";
 Board.peripheral.$suggestSolution              = "DEBUGSS";
 Board.peripheral.swclkPin.$suggestSolution     = "PA20";
 Board.peripheral.swdioPin.$suggestSolution     = "PA19";
-GPIO1.associatedPins[4].pin.$suggestSolution   = "PB14";
+GPIO1.associatedPins[4].pin.$suggestSolution   = "PB13";
 I2C1.peripheral.$suggestSolution               = "I2C1";
 I2C1.peripheral.sdaPin.$suggestSolution        = "PA10";
 I2C1.peripheral.sclPin.$suggestSolution        = "PA11";

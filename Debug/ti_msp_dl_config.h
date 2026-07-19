@@ -194,9 +194,9 @@ extern "C" {
 /* Port definition for Pin Group LED */
 #define LED_PORT                                                         (GPIOB)
 
-/* Defines for KEY: GPIOB.13 with pinCMx 30 on package pin 1 */
-#define LED_KEY_PIN                                             (DL_GPIO_PIN_13)
-#define LED_KEY_IOMUX                                            (IOMUX_PINCM30)
+/* Defines for KEY: GPIOB.20 with pinCMx 48 on package pin 19 */
+#define LED_KEY_PIN                                             (DL_GPIO_PIN_20)
+#define LED_KEY_IOMUX                                            (IOMUX_PINCM48)
 /* Port definition for Pin Group GRAY_IN */
 #define GRAY_IN_PORT                                                     (GPIOA)
 
@@ -224,10 +224,10 @@ extern "C" {
 #define GPIO_MOTOR_AIN2_PORT                                             (GPIOA)
 #define GPIO_MOTOR_AIN2_PIN                                     (DL_GPIO_PIN_22)
 #define GPIO_MOTOR_AIN2_IOMUX                                    (IOMUX_PINCM47)
-/* Defines for PIN_STBY: GPIOB.14 with pinCMx 31 on package pin 2 */
+/* Defines for PIN_STBY: GPIOB.13 with pinCMx 30 on package pin 1 */
 #define GPIO_MOTOR_PIN_STBY_PORT                                         (GPIOB)
-#define GPIO_MOTOR_PIN_STBY_PIN                                 (DL_GPIO_PIN_14)
-#define GPIO_MOTOR_PIN_STBY_IOMUX                                (IOMUX_PINCM31)
+#define GPIO_MOTOR_PIN_STBY_PIN                                 (DL_GPIO_PIN_13)
+#define GPIO_MOTOR_PIN_STBY_IOMUX                                (IOMUX_PINCM30)
 /* Port definition for Pin Group Gray_Address */
 #define Gray_Address_PORT                                                (GPIOA)
 

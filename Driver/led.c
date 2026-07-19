@@ -34,7 +34,7 @@ void LED_init(void)
 void LED_off(LED_Number num)
 {
     if (num >= LED_COUNT) return;
-    DL_GPIO_clearPins(GPIOA, LED_PINS[num]);
+    DL_GPIO_clearPins(GPIOB, LED_PINS[num]);
 }
 
 /**
@@ -44,7 +44,7 @@ void LED_off(LED_Number num)
 void LED_on(LED_Number num)
 {
     if (num >= LED_COUNT) return;
-    DL_GPIO_setPins(GPIOA, LED_PINS[num]);
+    DL_GPIO_setPins(GPIOB, LED_PINS[num]);
 }
 
 /**
@@ -54,7 +54,7 @@ void LED_on(LED_Number num)
 void LED_toggle(LED_Number num)
 {
     if (num >= LED_COUNT) return;
-    DL_GPIO_togglePins(GPIOA, LED_PINS[num]);
+    DL_GPIO_togglePins(GPIOB, LED_PINS[num]);
 }
 
 /**
@@ -74,8 +74,8 @@ void LED_setAll(uint16_t state)
         }
     }
     
-    DL_GPIO_clearPins(GPIOA, pinsToClear);
-    DL_GPIO_setPins(GPIOA, pinsToSet);
+    DL_GPIO_clearPins(GPIOB, pinsToClear);
+    DL_GPIO_setPins(GPIOB, pinsToSet);
 }
 
 /**
