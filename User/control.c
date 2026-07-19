@@ -8,6 +8,8 @@
 #include "key.h"
 #include "flash.h"
 #include "control.h"
+
+#include "motor.h"
 /*
  * =======================================================
  * 硬件引脚映射 (Hardware Pinout Map)
@@ -97,6 +99,8 @@ void Control(void)
             // 校准模式 - 将数字输出置0，八路LED灯关闭
             Digtal = 0;
         }
+
+        Motor_Ctrl();
 				
         // 处理按键输入
         Key_Process();
@@ -141,4 +145,80 @@ void GROUP1_IRQHandler(void)
             }
     }
 
+}
+
+
+
+int16_t rxbuf = 0, cx = 160;
+int16_t basespeed = 5;
+int16_t SpeedL = 0, SpeedR = 0;
+float Kp = 0.5;
+
+void Motor_Ctrl(void)
+{
+    // ---------- 2. 核心循迹算法 (加上这行) ----------
+            // 根据 8 位数字量计算偏离误差
+            // 越向左偏，误差为负数；越向右偏，误差为正数
+            int error = Calculate_Position_Error(Digtal); 
+            
+            // 基础电机控制 (比如是 PID 控制，或者简单的差速)
+            if (error == 0) 
+            {
+                // 传感器在正中间，或者全白/全黑，直行
+                Set_Speed(0, basespeed);
+                Set_Speed(1, basespeed);
+            } 
+            else if (error > 0) 
+            {
+                // 偏右了，需要向左转 (右侧减速，左侧保持或微减)
+                Set_Speed(0, basespeed - (error * 200));
+                Set_Speed(1, basespeed);
+            } 
+            else if (error < 0) 
+            {
+                // 偏左了，需要向右转 (左侧减速，右侧保持或微减)
+                Set_Speed(0, basespeed);
+                Set_Speed(1, basespeed - (abs(error) * 200));
+            }
+
+        else 
+        {
+            // 校准模式 - 电机停止，数字输出置0，八路LED灯关闭
+            Digtal = 0;
+            Set_Speed(0, 0);
+            Set_Speed(1, 0); // 校准时不走动
+        }
+}
+
+
+
+/**
+ * @brief 根据8位数字量计算位置误差
+ * @param digtal 8位数字状态（1代表黑线，0代表白底）
+ * @return 误差值。正数表示偏右，负数表示偏左
+ */
+int Calculate_Position_Error(unsigned char digtal)
+{
+    // 简化方法：计算重心位置 (左权重高为负，右权重高为正)
+    // 假设 8 个传感器索引 0(最左) 到 7(最右)
+    
+    float weighted_sum = 0;
+    int total_weight = 0;
+    
+    // 遍历 8 个位
+    for (int i = 0; i < 8; i++) {
+        if ((digtal >> i) & 0x01) {
+            // 如果将传感器索引映射为 -3.5 到 +3.5 的步进 (中心为0)
+            float position = (float)i - 3.5; 
+            weighted_sum += position;
+            total_weight += 1;
+        }
+    }
+    
+    if (total_weight == 0) {
+        return 0; // 没看到黑线
+    }
+    
+    // 返回平均误差（简单归一化，乘以一个系数可以让纠偏更猛）
+    return (int)((weighted_sum / total_weight) * 50);
 }

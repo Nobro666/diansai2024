@@ -3,4 +3,6 @@
 #include "headfile.h"
 
 void Control(void);
+void Motor_Ctrl(void);
+int Calculate_Position_Error(unsigned char digtal);
 #endif

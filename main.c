@@ -81,6 +81,9 @@ int main(void)
     //无MCU灰度传感器硬件起振需要时间
     // Tick_delay(100);
     state.value=KEY_IDLE;
+
+    DL_TimerA_startCounter(PWM_MOTOR_INST);
+    Motor_On();
 		
     /* 主应用程序循环 */
     while (1) {
