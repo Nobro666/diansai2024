@@ -117,7 +117,9 @@ int main(void)
 	
     // 初始化LED
     LED_init();
-    
+   
+    SYSCFG_DL_UART_0_init();
+    uart0_send_string("Start System OK\r\n");
     /* DMA配置 - 用于ADC数据传输 */
     // 设置DMA源地址(ADC存储器)
     DL_DMA_setSrcAddr(DMA, DMA_CH0_CHAN_ID, (uint32_t) &ADC0->ULLMEM.MEMRES[0]);
@@ -139,7 +141,7 @@ int main(void)
     No_MCU_Ganv_Sensor_Init(&sensor, white, black);
 
     //无MCU灰度传感器硬件起振需要时间
-    Tick_delay(100);
+    // Tick_delay(100);
     state.value=KEY_IDLE;
 		
     /* 主应用程序循环 */

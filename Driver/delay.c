@@ -27,8 +27,7 @@ void Tick_SysTickCallback(void) {
 
 
 
-// void TIMER_0_INST_IRQHandler(void){
-//     uint8_t index;
-// 	index=0;
-// 	Reg_tick++;
-// }
+void TIMER_0_INST_IRQHandler(void){
+    volatile uint8_t index1 = 0;
+	Reg_tick++;
+}

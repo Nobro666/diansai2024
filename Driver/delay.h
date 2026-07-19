@@ -2,6 +2,7 @@
 #define delay_h
 
 #include "ti_msp_dl_config.h"
+extern volatile uint8_t index1;
 extern volatile uint32_t Tick;
 extern volatile uint32_t Reg_tick;
 void delay_us(uint32_t us);

@@ -250,7 +250,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_SYSCTL_init(void)
     DL_SYSCTL_setULPCLKDivider(DL_SYSCTL_ULPCLK_DIV_1);
     DL_SYSCTL_setMCLKDivider(DL_SYSCTL_MCLK_DIVIDER_DISABLE);
     /* INT_GROUP1 Priority */
-    NVIC_SetPriority(GPIOA_INT_IRQn, 0);
+    NVIC_SetPriority(GPIOA_INT_IRQn, 1);
 
 }
 
