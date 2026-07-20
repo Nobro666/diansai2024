@@ -95,6 +95,7 @@ User/control.o: ../User/control.c \
  C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/PID/pid.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/clock.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/interrupt.h \
@@ -193,6 +194,7 @@ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/PID/pid.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/clock.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/interrupt.h:

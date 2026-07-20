@@ -149,45 +149,17 @@ void GROUP1_IRQHandler(void)
 
 
 
-int16_t rxbuf = 0, cx = 160;
-int16_t basespeed = 5;
-int16_t SpeedL = 0, SpeedR = 0;
-float Kp = 0.5;
+
+
+
+
+
+Motor motor_l;
+Motor motor_r;
 
 void Motor_Ctrl(void)
 {
-    // ---------- 2. 核心循迹算法 (加上这行) ----------
-            // 根据 8 位数字量计算偏离误差
-            // 越向左偏，误差为负数；越向右偏，误差为正数
-            int error = Calculate_Position_Error(Digtal); 
-            
-            // 基础电机控制 (比如是 PID 控制，或者简单的差速)
-            if (error == 0) 
-            {
-                // 传感器在正中间，或者全白/全黑，直行
-                Set_Speed(0, basespeed);
-                Set_Speed(1, basespeed);
-            } 
-            else if (error > 0) 
-            {
-                // 偏右了，需要向左转 (右侧减速，左侧保持或微减)
-                Set_Speed(0, basespeed - (error * 200));
-                Set_Speed(1, basespeed);
-            } 
-            else if (error < 0) 
-            {
-                // 偏左了，需要向右转 (左侧减速，右侧保持或微减)
-                Set_Speed(0, basespeed);
-                Set_Speed(1, basespeed - (abs(error) * 200));
-            }
-
-        else 
-        {
-            // 校准模式 - 电机停止，数字输出置0，八路LED灯关闭
-            Digtal = 0;
-            Set_Speed(0, 0);
-            Set_Speed(1, 0); // 校准时不走动
-        }
+    
 }
 
 

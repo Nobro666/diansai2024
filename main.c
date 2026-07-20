@@ -84,7 +84,6 @@ int main(void)
     
     //初始化电机
     DL_TimerA_startCounter(PWM_MOTOR_INST);
-    Motor_On();
 
     //初始化陀螺仪
     MPU6050_Init();

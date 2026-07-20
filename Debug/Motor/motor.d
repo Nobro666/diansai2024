@@ -83,7 +83,8 @@ Motor/motor.o: ../Motor/motor.c ../Motor/motor.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_vref.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h \
- D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h
+ D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/PID/pid.h
 ../Motor/motor.h:
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
@@ -168,3 +169,4 @@ D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_vref.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/PID/pid.h:

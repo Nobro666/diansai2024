@@ -42,6 +42,7 @@
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/Motor"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/MSPM0"/>
                                     <listOptionValue value="${PROJECT_ROOT}/Drivers/OLED_Hardware_I2C"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/User/PID"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User"/>
                                     <listOptionValue value="${PROJECT_ROOT}"/>
                                     <listOptionValue value="${PROJECT_ROOT}/${ConfigName}"/>

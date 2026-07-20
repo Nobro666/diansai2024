@@ -170,9 +170,10 @@ SYSTICK.systickEnable     = true;
 SYSTICK.period            = 32000;
 SYSTICK.interruptPriority = "0";
 
-TIMER1.$name            = "TIMER_Encoder";
-TIMER1.timerPeriod      = "10 ms";
-TIMER1.timerClkPrescale = 32;
+TIMER1.$name              = "TIMER_Encoder";
+TIMER1.timerPeriod        = "10 ms";
+TIMER1.timerClkPrescale   = 32;
+TIMER1.peripheral.$assign = "TIMA1";
 
 UART1.$name                    = "UART_0";
 UART1.enabledInterrupts        = ["RX"];
@@ -205,5 +206,4 @@ I2C1.peripheral.sdaPin.$suggestSolution        = "PA10";
 I2C1.peripheral.sclPin.$suggestSolution        = "PA11";
 I2C2.peripheral.$suggestSolution               = "I2C0";
 SYSCTL.peripheral.$suggestSolution             = "SYSCTL";
-TIMER1.peripheral.$suggestSolution             = "TIMA1";
 UART2.peripheral.$suggestSolution              = "UART1";
