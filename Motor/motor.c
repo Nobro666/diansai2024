@@ -1,6 +1,7 @@
 #include "motor.h"
-
+#include "headfile.h"
 #include "math.h"
+#include "ti_msp_dl_config.h" 
 
 /**
  * @brief 函数定义
@@ -26,7 +27,7 @@ static void Motor_Driver(Motor *motor, int16_t pwm);
  *
  */
 void Motor_Init(Motor *motor, void *timer_encoder, void *timer_pwm, DL_TIMER_CC_INDEX channel,
-                GPIO_Regs *port1, uint16_t pin1, GPIO_Regs *port2, uint16_t pin2)
+                GPIO_Regs *port1, uint32_t pin1, GPIO_Regs *port2, uint32_t pin2)
  {
   // 绑定函数指针，类似于面向对象的设计，将电机方法放到结构体里
   motor->PidInit= Motor_Pid_Init;
@@ -66,7 +67,7 @@ static void Motor_Calc(Motor *motor) { motor->pid.out = PID_Calc(&motor->pid, mo
  */
 static void Motor_Encoder_Update(Motor *motor) {
   motor->encoder.lastCount = motor->encoder.currentCount;//保留旧值
-  motor->encoder.currentCount = (int16_t)DL_TimerA_getCounterValue(motor->timer_encoder);//获取当前值
+  motor->encoder.currentCount = (int16_t) DL_TimerA_getTimerCount(motor->timer_encoder);//获取当前值
   motor->encoder.deltaCount = motor->encoder.currentCount - motor->encoder.lastCount;//计算差值
   //  16 位溢出/下溢补偿
   if (motor->encoder.deltaCount > 10000) {
@@ -113,15 +114,16 @@ static void Motor_Speed_Get(Motor *motor) {
   else if (pwm_value < 0)
   {
     // 反转
-    DL_GPIO_setPins(motor->port1, motor->pin1);
-    DL_GPIO_clearPins(motor->port2, motor->pin2);
+    DL_GPIO_setPins(motor->port2, motor->pin2);
+    DL_GPIO_clearPins(motor->port1, motor->pin1);
   }
   else
   {
-    DL_GPIO_setPins(motor->port1, motor->pin1);
+    DL_GPIO_clearPins(motor->port1, motor->pin1);
     DL_GPIO_clearPins(motor->port2, motor->pin2);
   }
-  DL_TimerA_setCaptureCompareValue(motor->timer_pwm, fabs(pwm_value), motor->pwm_channel);
+    DL_TimerA_setCaptureCompareValue(motor->timer_pwm, (uint16_t)fabs(pwm_value), motor->pwm_channel);
+
 }
 
 

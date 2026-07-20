@@ -7,10 +7,11 @@
 #include "stdio.h"
 #include "key.h"
 #include "flash.h"
-#include "control.h"
+#include "trace.h"
 
 #include "motor.h"
 #include "pid.h"
+#include "encoder.h"
 /*
  * =======================================================
  * 硬件引脚映射 (Hardware Pinout Map)
@@ -86,16 +87,11 @@ PID tracking_pid;
 Motor motor_l;
 Motor motor_r;
 
-float base_target_speed = 600.0f;
+float base_target_speed = 60.0f;
 
 void Motor_Ctrl(void)
 {
-    //电机初始化
-    Motor_Init(&motor_l, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_0_INDEX, GPIOA ,DL_GPIO_PIN_21, GPIOA, DL_GPIO_PIN_22);
-    Motor_Init(&motor_r, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_1_INDEX, GPIOB ,DL_GPIO_PIN_9, GPIOB, DL_GPIO_PIN_8);
-    //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 3200.0f, 3200.0f, 10, 0, 0);
-    motor_r.PidInit(&motor_r, DELTA, 3200.0f, 3200.0f, 10, 0, 0);
+
      // ----------------- 1. 读取传感器数据 -----------------
     No_Mcu_Ganv_Sensor_Task_Without_tick(&sensor);
     Get_Anolog_Value(&sensor, Anolog);
@@ -119,15 +115,15 @@ void Motor_Ctrl(void)
     // ----------------- 5. 速度限幅（非常关键！） -----------------
     // 防止突然反转或超出电机最大能力
     // 如果您的电机最快是 3200 脉冲，就设 3200
-    float max_speed = 3200.0f; 
+    float max_speed = 100.0f;
     if (left_target > max_speed) left_target = max_speed;
     if (left_target < -max_speed) left_target = -max_speed;
     if (right_target > max_speed) right_target = max_speed;
     if (right_target < -max_speed) right_target = -max_speed;
 
-    // 增加防微抖死区：如果速度太小（比如低于 200），直接给0，防止电机嗡嗡响不转
-    if (fabs(left_target) < 200.0f) left_target = 0.0f;
-    if (fabs(right_target) < 200.0f) right_target = 0.0f;
+    // 死区(占空比<20%视为停转)
+    if (fabs(left_target) < 20.0f) left_target = 0.0f;
+    if (fabs(right_target) < 20.0f) right_target = 0.0f;
 
     // ----------------- 6. 下发目标速度给电机驱动 -----------------
     // 这一步是关键！我们只告诉电机“你要跑多快”，电机底层 PID 会自动调控 PWM 去达到这个速度
@@ -168,18 +164,32 @@ float Calculate_Position_Error(unsigned char digtal)
 
 
 
-
+void Trace_init(void)
+{
+    // 1. 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
+    PID_Init(&tracking_pid, POSITION, 40.0f, 20.0f, 10, 0.0f, 0.0f);
+    // 2. 给电机初始化目标速度 (初始为0，防止一上电猛冲)
+    motor_l.speed_set = 0;
+    motor_r.speed_set = 0;
+    //电机初始化
+    Motor_Init(&motor_r, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_1_INDEX, GPIOB ,DL_GPIO_PIN_9, GPIOB, DL_GPIO_PIN_8);
+    Motor_Init(&motor_l, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_0_INDEX, GPIOA ,DL_GPIO_PIN_21, GPIOA, DL_GPIO_PIN_22);
+    //使能电机驱动芯片 (拉高STBY引脚)
+    DL_GPIO_setPins(GPIO_MOTOR_PIN_STBY_PORT, GPIO_MOTOR_PIN_STBY_PIN);
+    //编码器初始化(GPIO中断:相位A计数+相位B判方向,用Tick计时)
+    Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
+    Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
+    //电机PID参数初始化
+    motor_l.PidInit(&motor_l, DELTA, 100.0f, 100.0f, 10, 0, 0);
+    motor_r.PidInit(&motor_r, DELTA, 100.0f, 100.0f, 10, 0, 0);
+}
 
 
 
 
 void Control(void)
 {   
-    // 1. 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, POSITION, 1500.0f, 500.0f, 50.0f, 0.0f, 0.0f);
-    // 2. 给电机初始化目标速度 (初始为0，防止一上电猛冲)
-    motor_l.speed_set = 0;
-    motor_r.speed_set = 0;
+    
     if (state.value == KEY_IDLE||state.value == KEY_DISABLE||state.value == KEY_WAIT_LOSS ) {
             // 正常操作模式(非校准状态)
             
@@ -203,34 +213,41 @@ void Control(void)
         if (Tick - last_loop_tick >= 10)
          {
             last_loop_tick = Tick;
-            // 更新编码器计数值 
-            motor_l.EncoderUpdate(&motor_l);
-            motor_r.EncoderUpdate(&motor_r);
+            // 从编码器驱动获取delta (GPIO中断累加, 替代TIMA1定时器读数)
+            {
+                int32_t dL = Encoder_GetDelta(&encL);
+                int32_t dR = Encoder_GetDelta(&encR);
+                motor_l.encoder.deltaCount = (int16_t)dL;
+                motor_r.encoder.deltaCount = (int16_t)dR;
+                motor_l.encoder.totalCount += dL;
+                motor_r.encoder.totalCount += dR;
+            }
+            // 读取编码器速度反馈 (更新 speed_filter)
+            motor_l.SpeedGet(&motor_l);
+            motor_r.SpeedGet(&motor_r);
             // 读取传感器并执行循迹函数
             Motor_Ctrl();
-            
+
             // 第三步：驱动层闭环 (让 PID 速度环生效)
             // 结合当前的 speed_set (目标) 和 speed_filter (当前实际速度)，算出 PWM 发给电机
             motor_l.Calc(&motor_l);
             motor_r.Calc(&motor_r);
+            // 将PID输出写入PWM硬件
+            motor_l.Driver(&motor_l, (int16_t)motor_l.pid.out);
+            motor_r.Driver(&motor_r, (int16_t)motor_r.pid.out);
+
+            // 调试输出（每10ms一次）
+            uart0_send_string("T\r\n");  // 心跳信号，确认10ms循环在跑
         }
 				
         // 处理按键输入
         Key_Process();
-        
-           // 假设定义
-           char tx_buff[128];  // 发送缓冲区，不用太大（每行最多约60字节） 
-           // 发送数字量（8位拆分为8个独立位）
-           sprintf(tx_buff, "Digtal %d-%d-%d-%d-%d-%d-%d-%d\r\n",(Digtal >> 0) & 0x01,(Digtal >> 1) & 0x01,(Digtal >> 2) & 0x01,(Digtal >> 3) & 0x01,(Digtal >> 4) & 0x01,(Digtal >> 5) & 0x01,(Digtal >> 6) & 0x01,(Digtal >> 7) & 0x01);
-           uart0_send_string(tx_buff);
-
-           // 发送模拟量（全部8个通道）
-           sprintf(tx_buff, "Anolog %u-%u-%u-%u-%u-%u-%u-%u\r\n",Anolog[0], Anolog[1], Anolog[2], Anolog[3],Anolog[4], Anolog[5], Anolog[6], Anolog[7]);
-           uart0_send_string(tx_buff);
-
 
         // 更新KEY和ERR LED的状态
         LED_KEY_Blink_Update();
+
+        // 保持 Tick 时序推进（每次 Control 调用递增一次）
+        Tick++;
 }
 
 /**
@@ -245,20 +262,39 @@ void GROUP1_IRQHandler(void)
 	    // 读取Group1的中断寄存器并清除中断标志位
     uint32_t pending = DL_GPIO_getPendingInterrupt(GPIOA);
 	
-    if(pending == GRAY_IN_IN_KEY_IIDX){
+    if(pending & GRAY_IN_IN_KEY_IIDX){
             /* 防抖处理 */
             if ((Tick - last_key_time) < DEBOUNCE_TIME_MS) {
+                DL_GPIO_clearInterruptStatus(GPIOA, GRAY_IN_IN_KEY_PIN);
                 return;
             }
             /* 确认按键按下 */
             if (DL_GPIO_readPins(GRAY_IN_PORT, GRAY_IN_IN_KEY_PIN) == 0) {
                 key_pressed = 1;
-								long_pressed_key_time=Tick;
+				long_pressed_key_time=Tick;
                 last_key_time = Tick;
             }
+            DL_GPIO_clearInterruptStatus(GPIOA, GRAY_IN_IN_KEY_PIN);
     }
 
+    /* 编码器中断处理(PA7=encL, PA28=encR 相位A脉冲计数) */
+    Encoder_HandleGPIOA(pending);
+
+    /* 清除 GPIOA 其它未处理中断 */
+    uint32_t remainingA = pending & ~(GRAY_IN_IN_KEY_IIDX | DL_GPIO_IIDX_DIO7 | DL_GPIO_IIDX_DIO28);
+    if (remainingA) {
+        DL_GPIO_clearInterruptStatus(GPIOA, remainingA);
+    }
+
+    /* GPIOB 编码器中断处理 */
+    uint32_t pendingB = DL_GPIO_getPendingInterrupt(GPIOB);
+    Encoder_HandleGPIOB(pendingB);
 }
+
+
+
+
+
 
 
 

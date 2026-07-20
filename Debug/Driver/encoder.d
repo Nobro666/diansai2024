@@ -1,6 +1,6 @@
 # FIXED
 
-Drivers/MSPM0/clock.o: ../Drivers/MSPM0/clock.c \
+Driver/encoder.o: ../Driver/encoder.c ../Driver/encoder.h \
  ti_msp_dl_config.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h \
@@ -84,8 +84,8 @@ Drivers/MSPM0/clock.o: ../Drivers/MSPM0/clock.c \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h \
- ../Drivers/MSPM0/clock.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/delay.h
+ ../Driver/delay.h
+../Driver/encoder.h:
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h:
@@ -169,5 +169,4 @@ D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_vref.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h:
-../Drivers/MSPM0/clock.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/delay.h:
+../Driver/delay.h:

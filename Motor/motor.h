@@ -3,15 +3,15 @@
 
 // 【非常重要】必须放在最前面包含，否则报 "unknown type name"
 #include "ti_msp_dl_config.h" 
-
+#include "headfile.h"
 #include "pid.h"
 #include "math.h"
 
 #define MOTOR_FILTER 0.3
-#define POLL_INTERVAL_MS 99      // 轮询间隔
+#define POLL_INTERVAL_MS 10      // 轮询间隔
 #define MOTOR_SPEED_RERATIO 30u  // 电机减速比
 #define PULSE_PRE_ROUND 11       // 一圈多少个脉冲
-#define RADIUS_OF_TYRE 40        // 轮胎半径，单位毫米
+#define RADIUS_OF_TYRE 32.5f        // 轮胎半径，单位毫米
 #define MULTIPLE_ENCODER 4       // 编码器倍频,采用T1&T2计数，倍数*4
 #define LINE_SPEED_C RADIUS_OF_TYRE * 2 * 3.1415926535897
 
@@ -35,9 +35,9 @@ typedef struct _MOTOR {
   DL_TIMER_CC_INDEX pwm_channel;    // 【修正】PWM通道索引 (如 DL_TIMER_CC_0_INDEX) 大写INDEX
   
   GPIO_Regs *port1;                 // 【修正】方向引脚1 端口 (如 GPIOA)
-  uint16_t pin1;                    // 方向引脚1 引脚 (如 DL_GPIO_PIN_0)
+  uint32_t pin1;                    // 方向引脚1 引脚 (如 DL_GPIO_PIN_21=0x00200000)
   GPIO_Regs *port2;                 // 【修正】方向引脚2 端口
-  uint16_t pin2;                    // 方向引脚2 引脚
+  uint32_t pin2;                    // 方向引脚2 引脚
 
   Encoder encoder;
   float last_speed;
@@ -56,7 +56,7 @@ typedef struct _MOTOR {
 
 // 声明初始化函数 (参数类型也做了同步修正)
 void Motor_Init(Motor *motor, void *timer_encoder, void *timer_pwm, DL_TIMER_CC_INDEX channel,
-                GPIO_Regs *port1, uint16_t pin1, GPIO_Regs *port2, uint16_t pin2);
+                GPIO_Regs *port1, uint32_t pin1, GPIO_Regs *port2, uint32_t pin2);
 
 #endif /* __MOTOR_H__ */
 

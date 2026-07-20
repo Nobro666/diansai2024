@@ -6,21 +6,21 @@ SHELL = cmd.exe
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../User/control.c 
+../User/trace/trace.c 
 
 C_DEPS += \
-./User/control.d 
+./User/trace/trace.d 
 
 OBJS += \
-./User/control.o 
+./User/trace/trace.o 
 
 OBJS__QUOTED += \
-"User\control.o" 
+"User\trace\trace.o" 
 
 C_DEPS__QUOTED += \
-"User\control.d" 
+"User\trace\trace.d" 
 
 C_SRCS__QUOTED += \
-"../User/control.c" 
+"../User/trace/trace.c" 
 
 

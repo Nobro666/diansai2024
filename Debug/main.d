@@ -91,7 +91,7 @@ main.o: ../main.c \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/uart.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/trace/trace.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h \
@@ -189,7 +189,7 @@ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/led.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/uart.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/User/control.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/trace/trace.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h:

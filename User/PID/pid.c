@@ -71,9 +71,9 @@ float PID_Calc(PID *pid, float now, float set)
         pid->Dbuf[1] = pid->Dbuf[0];
         pid->Dbuf[0] = (pid->err[0] - pid->err[1]);
         pid->Dout = pid->kd * pid->Dbuf[0];
-        LimitMax(pid->Iout, pid->max_iout);
+        pid->Iout = LimitMax(pid->Iout, pid->max_iout);
         pid->out = pid->Pout + pid->Iout + pid->Dout;
-        LimitMax(pid->out, pid->max_out);
+        pid->out = LimitMax(pid->out, pid->max_out);
     }
     else if (pid->mode == DELTA)
     {
@@ -84,7 +84,7 @@ float PID_Calc(PID *pid, float now, float set)
         pid->Dbuf[0] = (pid->err[0] - 2.0f * pid->err[1] + pid->err[2]);
         pid->Dout = pid->kd * pid->Dbuf[0];
         pid->out += pid->Pout + pid->Iout + pid->Dout;
-        LimitMax(pid->out, pid->max_out);
+        pid->out = LimitMax(pid->out, pid->max_out);
     }
     return pid->out;
 }

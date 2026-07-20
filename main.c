@@ -39,7 +39,13 @@
 #include "stdio.h"
 #include "key.h"
 #include "flash.h"
-#include "control.h"
+#include "trace.h"
+#include "pid.h"
+
+extern Motor motor_l;
+extern Motor motor_r;
+extern PID tracking_pid; 
+
 
 extern unsigned short Anolog[8] ;    // 存储当前模拟量值的数组
 extern unsigned short white[8] ;     // 存储白色校准值的数组 
@@ -52,6 +58,9 @@ int main(void)
 {
     // 初始化系统配置
     SYSCFG_DL_init();
+
+    __enable_irq();
+    SysTick_Init();
 	
     // 初始化LED
     LED_init();
@@ -83,15 +92,20 @@ int main(void)
     state.value=KEY_IDLE;
     
     //初始化电机
-    DL_TimerA_startCounter(PWM_MOTOR_INST);
-
+    Trace_init();
+    
     //初始化陀螺仪
     MPU6050_Init();
-	float Yaw_Angle=0;
+	// float Yaw_Angle=0;
     /* 主应用程序循环 */
     while (1)
     {
-        
+            
+        // DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST,600,DL_TIMER_CC_0_INDEX);
+        // DL_GPIO_setPins(GPIO_MOTOR_AIN1_PORT, GPIO_MOTOR_AIN1_PIN);
+        // DL_GPIO_clearPins(GPIO_MOTOR_AIN2_PORT, GPIO_MOTOR_AIN2_PIN);
+        Control();
+
     }
 }
 

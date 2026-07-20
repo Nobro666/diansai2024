@@ -4,6 +4,7 @@
 "./Driver/No_Mcu_Ganv_Grayscale_Sensor.o"
 "./Driver/adc.o"
 "./Driver/delay.o"
+"./Driver/encoder.o"
 "./Driver/flash.o"
 "./Driver/key.o"
 "./Driver/led.o"
@@ -18,7 +19,7 @@
 "./Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o"
 "./Motor/motor.o"
 "./User/PID/pid.o"
-"./User/control.o"
+"./User/trace/trace.o"
 -l"./device_linker.cmd"
 -ldevice.cmd.genlibs
 -llibc.a

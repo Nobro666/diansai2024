@@ -10,8 +10,8 @@
 // #include "atk_ms901m.h"
 
 
-#include "control.h"
-// #include "pid.h"
+#include "trace.h"
+#include "pid.h"
 
 #include "clock.h"
 #include "interrupt.h"

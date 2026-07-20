@@ -125,5 +125,5 @@ Drivers/MSPM0 \
 Drivers/OLED_Hardware_I2C \
 Motor \
 User/PID \
-User \
+User/trace \
 
