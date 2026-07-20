@@ -13,6 +13,12 @@
 #include "control.h"
 // #include "pid.h"
 
+#include "clock.h"
+#include "interrupt.h"
+
+#include "mpu6050.h"
+#include "oled_hardware_i2c.h"
+
 //LED控制宏定义
 #define LED_RED_ON      DL_GPIO_setPins(LEDS_PORT, LEDS_LED2_RED_PIN);
 #define LED_RED_OFF     DL_GPIO_clearPins(LEDS_PORT, LEDS_LED2_RED_PIN);

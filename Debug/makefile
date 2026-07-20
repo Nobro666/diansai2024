@@ -29,6 +29,7 @@ ORDERED_OBJS += \
 "./Drivers/MSPM0/interrupt.o" \
 "./Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o" \
 "./Motor/motor.o" \
+"./User/PID/pid.o" \
 "./User/control.o" \
 $(GEN_CMDS__FLAG) \
 -Wl,-ldevice.cmd.genlibs \
@@ -47,6 +48,7 @@ RMDIR := RMDIR /S/Q
 -include Drivers/MSPM0/subdir_vars.mk
 -include Drivers/OLED_Hardware_I2C/subdir_vars.mk
 -include Motor/subdir_vars.mk
+-include User/PID/subdir_vars.mk
 -include User/subdir_vars.mk
 -include subdir_rules.mk
 -include Driver/subdir_rules.mk
@@ -54,6 +56,7 @@ RMDIR := RMDIR /S/Q
 -include Drivers/MSPM0/subdir_rules.mk
 -include Drivers/OLED_Hardware_I2C/subdir_rules.mk
 -include Motor/subdir_rules.mk
+-include User/PID/subdir_rules.mk
 -include User/subdir_rules.mk
 -include objects.mk
 
@@ -165,8 +168,8 @@ diansai2024.out: $(OBJS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(GEN_MISC_FILES__QUOTED)$(GEN_FILES__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Driver\No_Mcu_Ganv_Grayscale_Sensor.o" "Driver\adc.o" "Driver\delay.o" "Driver\flash.o" "Driver\key.o" "Driver\led.o" "Driver\tracker.o" "Driver\uart.o" "Drivers\MPU6050\inv_mpu.o" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.o" "Drivers\MPU6050\mpu6050.o" "Drivers\MPU6050\mspm0_i2c.o" "Drivers\MSPM0\clock.o" "Drivers\MSPM0\interrupt.o" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.o" "Motor\motor.o" "User\control.o" 
-	-$(RM) "main.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Driver\No_Mcu_Ganv_Grayscale_Sensor.d" "Driver\adc.d" "Driver\delay.d" "Driver\flash.d" "Driver\key.d" "Driver\led.d" "Driver\tracker.d" "Driver\uart.d" "Drivers\MPU6050\inv_mpu.d" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.d" "Drivers\MPU6050\mpu6050.d" "Drivers\MPU6050\mspm0_i2c.d" "Drivers\MSPM0\clock.d" "Drivers\MSPM0\interrupt.d" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.d" "Motor\motor.d" "User\control.d" 
+	-$(RM) "main.o" "ti_msp_dl_config.o" "startup_mspm0g350x_ticlang.o" "Driver\No_Mcu_Ganv_Grayscale_Sensor.o" "Driver\adc.o" "Driver\delay.o" "Driver\flash.o" "Driver\key.o" "Driver\led.o" "Driver\tracker.o" "Driver\uart.o" "Drivers\MPU6050\inv_mpu.o" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.o" "Drivers\MPU6050\mpu6050.o" "Drivers\MPU6050\mspm0_i2c.o" "Drivers\MSPM0\clock.o" "Drivers\MSPM0\interrupt.o" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.o" "Motor\motor.o" "User\PID\pid.o" "User\control.o" 
+	-$(RM) "main.d" "ti_msp_dl_config.d" "startup_mspm0g350x_ticlang.d" "Driver\No_Mcu_Ganv_Grayscale_Sensor.d" "Driver\adc.d" "Driver\delay.d" "Driver\flash.d" "Driver\key.d" "Driver\led.d" "Driver\tracker.d" "Driver\uart.d" "Drivers\MPU6050\inv_mpu.d" "Drivers\MPU6050\inv_mpu_dmp_motion_driver.d" "Drivers\MPU6050\mpu6050.d" "Drivers\MPU6050\mspm0_i2c.d" "Drivers\MSPM0\clock.d" "Drivers\MSPM0\interrupt.d" "Drivers\OLED_Hardware_I2C\oled_hardware_i2c.d" "Motor\motor.d" "User\PID\pid.d" "User\control.d" 
 	-@echo ' '
 
 .PHONY: all clean dependents
