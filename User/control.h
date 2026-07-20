@@ -4,5 +4,5 @@
 
 void Control(void);
 void Motor_Ctrl(void);
-int Calculate_Position_Error(unsigned char digtal);
+float Calculate_Position_Error(unsigned char digtal);
 #endif

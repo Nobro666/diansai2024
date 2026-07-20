@@ -89,24 +89,10 @@ int main(void)
     MPU6050_Init();
 	float Yaw_Angle=0;
     /* 主应用程序循环 */
-    while (1) {
-        // ===== 2. 在主循环中读取数据 =====
-        // 调用 DMP 读取函数，将欧拉角（角度）读出来
-        // 注：有的库叫 dmp_read_angles，有的叫 mpu_dmp_get_data，看你的移植文件
-        if (mpu_read_mem(&Yaw_Angle) == 0) { 
-            // 假设 Yaw_Angle 是 0~360 度
-            // 如果传感器的 0 度不是你车头的方向，减去一个偏移量即可
-            
-            // ===== 3. 串口打印调试（电赛必做） =====
-            char tx_buff[50];
-            sprintf(tx_buff, "Yaw: %.1f\r\n", Yaw_Angle);
-            uart0_send_string(tx_buff);
-            
-            // 你的控制逻辑（比如原地转 90 度）
-            // if (Yaw_Angle > 90.0f) { Motor_Set(0,0); ... }
+    while (1)
+    {
+        
     }
-        Tick_delay(10);
-}
 }
 
 

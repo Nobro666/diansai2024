@@ -10,6 +10,7 @@
 #include "control.h"
 
 #include "motor.h"
+#include "pid.h"
 /*
  * =======================================================
  * 硬件引脚映射 (Hardware Pinout Map)
@@ -71,7 +72,6 @@
  */
 
 
-
 // 全局变量定义
 unsigned short Anolog[8] = {0};    // 存储当前模拟量值的数组
 unsigned short white[8] = {0};     // 存储白色校准值的数组 
@@ -81,8 +81,105 @@ unsigned short Normal[8];          // 归一化值数组
 No_MCU_Sensor sensor;              // 传感器数据结构体
 unsigned char Digtal;              // 数字输出值
 
-void Control(void)
+
+PID tracking_pid;
+Motor motor_l;
+Motor motor_r;
+
+float base_target_speed = 600.0f;
+
+void Motor_Ctrl(void)
 {
+    //电机初始化
+    Motor_Init(&motor_l, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_0_INDEX, GPIOA ,DL_GPIO_PIN_21, GPIOA, DL_GPIO_PIN_22);
+    Motor_Init(&motor_r, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_1_INDEX, GPIOB ,DL_GPIO_PIN_9, GPIOB, DL_GPIO_PIN_8);
+    //电机PID参数初始化
+    motor_l.PidInit(&motor_l, DELTA, 3200.0f, 3200.0f, 10, 0, 0);
+    motor_r.PidInit(&motor_r, DELTA, 3200.0f, 3200.0f, 10, 0, 0);
+     // ----------------- 1. 读取传感器数据 -----------------
+    No_Mcu_Ganv_Sensor_Task_Without_tick(&sensor);
+    Get_Anolog_Value(&sensor, Anolog);
+    Digtal = Get_Digtal_For_User(&sensor);
+
+    // ----------------- 2. 计算位置误差 -----------------
+    // 之前写的计算误差函数返回 -3.5 ~ +3.5，直接用
+    float error = Calculate_Position_Error(Digtal); 
+
+    // ----------------- 3. 纠偏 PID 计算 (差速计算) -----------------
+    // 这里我们只做一个目标值=0的PID，计算出为了把误差拉回0所需的“差速值”
+    // 使用您之前定义好的 tracking_pid
+    float turn_correction = PID_Calc(&tracking_pid, error, 0.0f);
+
+    // ----------------- 4. 计算左右轮目标速度 -----------------
+    // 核心公式：左轮 = 基础速度 + 修正量，右轮 = 基础速度 - 修正量
+    // 如果偏右（正误差），PID输出正值：左轮加速，右轮减速 -> 向左转
+    float left_target = base_target_speed + turn_correction;
+    float right_target = base_target_speed - turn_correction;
+
+    // ----------------- 5. 速度限幅（非常关键！） -----------------
+    // 防止突然反转或超出电机最大能力
+    // 如果您的电机最快是 3200 脉冲，就设 3200
+    float max_speed = 3200.0f; 
+    if (left_target > max_speed) left_target = max_speed;
+    if (left_target < -max_speed) left_target = -max_speed;
+    if (right_target > max_speed) right_target = max_speed;
+    if (right_target < -max_speed) right_target = -max_speed;
+
+    // 增加防微抖死区：如果速度太小（比如低于 200），直接给0，防止电机嗡嗡响不转
+    if (fabs(left_target) < 200.0f) left_target = 0.0f;
+    if (fabs(right_target) < 200.0f) right_target = 0.0f;
+
+    // ----------------- 6. 下发目标速度给电机驱动 -----------------
+    // 这一步是关键！我们只告诉电机“你要跑多快”，电机底层 PID 会自动调控 PWM 去达到这个速度
+    motor_l.speed_set = left_target;
+    motor_r.speed_set = right_target;
+}
+
+
+
+
+/**
+ * @brief 根据8位数字量计算位置误差
+ * @param digtal 8位数字状态（1代表黑线，0代表白底）
+ * @return 误差值。正数表示偏右，负数表示偏左
+ */
+float Calculate_Position_Error(unsigned char digtal)
+{
+    float weighted_sum = 0;
+    float total_weight = 0;
+    
+    for (int i = 0; i < 8; i++) {
+        if ((digtal >> i) & 0x01) {
+            float position = (float)i - 3.5; 
+            weighted_sum += position;
+            total_weight += 1;
+        }
+    }
+    
+    if (total_weight == 0) return 0.0f;
+    
+    // 返回纯正的误差位置
+    return (weighted_sum / total_weight); 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+void Control(void)
+{   
+    // 1. 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
+    PID_Init(&tracking_pid, POSITION, 1500.0f, 500.0f, 50.0f, 0.0f, 0.0f);
+    // 2. 给电机初始化目标速度 (初始为0，防止一上电猛冲)
+    motor_l.speed_set = 0;
+    motor_r.speed_set = 0;
     if (state.value == KEY_IDLE||state.value == KEY_DISABLE||state.value == KEY_WAIT_LOSS ) {
             // 正常操作模式(非校准状态)
             
@@ -100,7 +197,23 @@ void Control(void)
             Digtal = 0;
         }
 
-        Motor_Ctrl();
+        // 3. 必须用固定时间间隔调用，保证速度计算准确 (建议用 Tick 做非阻塞延时)
+        // 每隔 10ms 执行一次循迹
+        static uint32_t last_loop_tick = 0;
+        if (Tick - last_loop_tick >= 10)
+         {
+            last_loop_tick = Tick;
+            // 更新编码器计数值 
+            motor_l.EncoderUpdate(&motor_l);
+            motor_r.EncoderUpdate(&motor_r);
+            // 读取传感器并执行循迹函数
+            Motor_Ctrl();
+            
+            // 第三步：驱动层闭环 (让 PID 速度环生效)
+            // 结合当前的 speed_set (目标) 和 speed_filter (当前实际速度)，算出 PWM 发给电机
+            motor_l.Calc(&motor_l);
+            motor_r.Calc(&motor_r);
+        }
 				
         // 处理按键输入
         Key_Process();
@@ -153,44 +266,3 @@ void GROUP1_IRQHandler(void)
 
 
 
-
-Motor motor_l;
-Motor motor_r;
-
-void Motor_Ctrl(void)
-{
-    
-}
-
-
-
-/**
- * @brief 根据8位数字量计算位置误差
- * @param digtal 8位数字状态（1代表黑线，0代表白底）
- * @return 误差值。正数表示偏右，负数表示偏左
- */
-int Calculate_Position_Error(unsigned char digtal)
-{
-    // 简化方法：计算重心位置 (左权重高为负，右权重高为正)
-    // 假设 8 个传感器索引 0(最左) 到 7(最右)
-    
-    float weighted_sum = 0;
-    int total_weight = 0;
-    
-    // 遍历 8 个位
-    for (int i = 0; i < 8; i++) {
-        if ((digtal >> i) & 0x01) {
-            // 如果将传感器索引映射为 -3.5 到 +3.5 的步进 (中心为0)
-            float position = (float)i - 3.5; 
-            weighted_sum += position;
-            total_weight += 1;
-        }
-    }
-    
-    if (total_weight == 0) {
-        return 0; // 没看到黑线
-    }
-    
-    // 返回平均误差（简单归一化，乘以一个系数可以让纠偏更猛）
-    return (int)((weighted_sum / total_weight) * 50);
-}
