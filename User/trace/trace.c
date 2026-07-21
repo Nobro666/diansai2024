@@ -87,46 +87,29 @@ PID tracking_pid;
 Motor motor_l;
 Motor motor_r;
 
-float base_target_speed = 60.0f;
+float base_target_speed = 0;
 
-void Motor_Ctrl(void)
+void Motor_Ctrl(float err)
 {
+    // 纠偏 PID → 差速值
+    float turn_correction = PID_Calc(&tracking_pid, err, 0.0f);
 
-     // ----------------- 1. 读取传感器数据 -----------------
-    No_Mcu_Ganv_Sensor_Task_Without_tick(&sensor);
-    Get_Anolog_Value(&sensor, Anolog);
-    Digtal = Get_Digtal_For_User(&sensor);
-
-    // ----------------- 2. 计算位置误差 -----------------
-    // 之前写的计算误差函数返回 -3.5 ~ +3.5，直接用
-    float error = Calculate_Position_Error(Digtal); 
-
-    // ----------------- 3. 纠偏 PID 计算 (差速计算) -----------------
-    // 这里我们只做一个目标值=0的PID，计算出为了把误差拉回0所需的“差速值”
-    // 使用您之前定义好的 tracking_pid
-    float turn_correction = PID_Calc(&tracking_pid, error, 0.0f);
-
-    // ----------------- 4. 计算左右轮目标速度 -----------------
-    // 核心公式：左轮 = 基础速度 + 修正量，右轮 = 基础速度 - 修正量
-    // 如果偏右（正误差），PID输出正值：左轮加速，右轮减速 -> 向左转
-    float left_target = base_target_speed + turn_correction;
+    // 左右轮目标速度 = 基础速度 ± 差速修正
+    float left_target  = base_target_speed + turn_correction;
     float right_target = base_target_speed - turn_correction;
 
-    // ----------------- 5. 速度限幅（非常关键！） -----------------
-    // 防止突然反转或超出电机最大能力
-    // 如果您的电机最快是 3200 脉冲，就设 3200
-    float max_speed = 100.0f;
-    if (left_target > max_speed) left_target = max_speed;
-    if (left_target < -max_speed) left_target = -max_speed;
-    if (right_target > max_speed) right_target = max_speed;
+    // 速度限幅
+    float max_speed = 3000;
+    if (left_target > max_speed)   left_target = max_speed;
+    if (left_target < -max_speed)  left_target = -max_speed;
+    if (right_target > max_speed)  right_target = max_speed;
     if (right_target < -max_speed) right_target = -max_speed;
 
-    // 死区(占空比<20%视为停转)
-    if (fabs(left_target) < 20.0f) left_target = 0.0f;
+    // 死区
+    if (fabs(left_target) < 20.0f)  left_target = 0.0f;
     if (fabs(right_target) < 20.0f) right_target = 0.0f;
 
-    // ----------------- 6. 下发目标速度给电机驱动 -----------------
-    // 这一步是关键！我们只告诉电机“你要跑多快”，电机底层 PID 会自动调控 PWM 去达到这个速度
+    // 下发给电机 PID
     motor_l.speed_set = left_target;
     motor_r.speed_set = right_target;
 }
@@ -180,8 +163,8 @@ void Trace_init(void)
     Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
     Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
     //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 100.0f, 100.0f, 10, 0, 0);
-    motor_r.PidInit(&motor_r, DELTA, 100.0f, 100.0f, 10, 0, 0);
+    motor_l.PidInit(&motor_l, DELTA, 3200.0f, 1600.0f, 3, 0, 0);
+    motor_r.PidInit(&motor_r, DELTA, 3200.0f, 1600.0f, 3, 0, 0);
 }
 
 
@@ -203,9 +186,10 @@ void Control(void)
             Digtal = Get_Digtal_For_User(&sensor);
 					
         } else {
-            // 校准模式 - 将数字输出置0，八路LED灯关闭
             Digtal = 0;
         }
+
+    float error = Calculate_Position_Error(Digtal);
 
         // 3. 必须用固定时间间隔调用，保证速度计算准确 (建议用 Tick 做非阻塞延时)
         // 每隔 10ms 执行一次循迹
@@ -225,19 +209,32 @@ void Control(void)
             // 读取编码器速度反馈 (更新 speed_filter)
             motor_l.SpeedGet(&motor_l);
             motor_r.SpeedGet(&motor_r);
-            // 读取传感器并执行循迹函数
-            Motor_Ctrl();
+            // 循迹 → 设 speed_set
+            Motor_Ctrl(error);
 
             // 第三步：驱动层闭环 (让 PID 速度环生效)
             // 结合当前的 speed_set (目标) 和 speed_filter (当前实际速度)，算出 PWM 发给电机
             motor_l.Calc(&motor_l);
             motor_r.Calc(&motor_r);
             // 将PID输出写入PWM硬件
-            motor_l.Driver(&motor_l, (int16_t)motor_l.pid.out);
-            motor_r.Driver(&motor_r, (int16_t)motor_r.pid.out);
+            motor_l.Driver(&motor_l, (int32_t)motor_l.pid.out);
+            motor_r.Driver(&motor_r, (int32_t)motor_r.pid.out);
 
-            // 调试输出（每10ms一次）
-            uart0_send_string("T\r\n");  // 心跳信号，确认10ms循环在跑
+            // 调试输出（每10ms一次，手动格式化避免sprintf卡死）
+            uart0_send_string("D:");
+            for (int i = 7; i >= 0; i--) {
+                uart0_send_char(((Digtal >> i) & 0x01) ? '1' : '0');
+            }
+            uart0_send_string(" A:");
+            for (int i = 0; i < 8; i++) {
+                uint16_t v = Anolog[i];
+                uart0_send_char('0' + v / 1000 % 10);
+                uart0_send_char('0' + v / 100  % 10);
+                uart0_send_char('0' + v / 10   % 10);
+                uart0_send_char('0' + v        % 10);
+                if (i < 7) uart0_send_char(',');
+            }
+            uart0_send_string("\r\n");
         }
 				
         // 处理按键输入

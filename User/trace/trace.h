@@ -4,6 +4,6 @@
 
 void Trace_init(void);
 void Control(void);
-void Motor_Ctrl(void);
+void Motor_Ctrl(float err);
 float Calculate_Position_Error(unsigned char digtal);
 #endif

@@ -10,9 +10,9 @@ EncoderUnit encL, encR;
  *        配置内部上拉电阻防止浮空
  */
 void Encoder_Init(EncoderUnit *enc,
-                  GPIO_Regs *portA, uint16_t pinA,
-                  GPIO_Regs *portB, uint16_t pinB,
-                  uint16_t ppr)
+                  GPIO_Regs *portA, uint32_t pinA,
+                  GPIO_Regs *portB, uint32_t pinB,
+                  uint32_t ppr)
 {
     enc->portA  = portA;
     enc->pinA   = pinA;

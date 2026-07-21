@@ -28,9 +28,9 @@ typedef struct {
  * @note  初始化后需要在 GROUP1_IRQHandler 中调用 Encoder_HandleGPIOA/B
  */
 void Encoder_Init(EncoderUnit *enc,
-                  GPIO_Regs *portA, uint16_t pinA,
-                  GPIO_Regs *portB, uint16_t pinB,
-                  uint16_t ppr);
+                  GPIO_Regs *portA, uint32_t pinA,
+                  GPIO_Regs *portB, uint32_t pinB,
+                  uint32_t ppr);
 
 /**
  * @brief 获取编码器累计脉冲计数
