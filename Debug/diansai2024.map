@@ -1,7 +1,7 @@
 ******************************************************************************
             TI ARM Clang Linker PC v4.0.4                      
 ******************************************************************************
->> Linked Tue Jul 21 19:39:55 2026
+>> Linked Tue Jul 21 20:44:08 2026
 
 OUTPUT FILE NAME:   <diansai2024.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 000051d9
@@ -64,53 +64,52 @@ section   page    origin      length       input sections
                   00001950    00000128     inv_mpu.o (.text.mpu_init)
                   00001a78    00000124     inv_mpu.o (.text.mpu_load_firmware)
                   00001b9c    0000010c     libclang_rt.builtins.a : divdf3.S.obj (.text.__divdf3)
-                  00001ca8    00000104     driverlib.a : dl_timer.o (.text.DL_Timer_initFourCCPWMMode)
-                  00001dac    00000104     trace.o (.text.Trace_init)
-                  00001eb0    00000100     inv_mpu.o (.text.mpu_lp_accel_mode)
-                  00001fb0    000000fc     driverlib.a : dl_timer.o (.text.DL_Timer_initTimerMode)
-                  000020ac    000000ec     inv_mpu.o (.text.mpu_set_sample_rate)
-                  00002198    000000e4     libclang_rt.builtins.a : muldf3.S.obj (.text.__muldf3)
-                  0000227c    000000e4     inv_mpu.o (.text.mpu_set_accel_fsr)
-                  00002360    000000d8     driverlib.a : dl_flashctl.o (.text.DL_FlashCTL_unprotectSector)
-                  00002438    000000d8     libclang_rt.builtins.a : addsf3.S.obj (.text)
-                  00002510    000000d4     inv_mpu.o (.text.set_int_enable)
-                  000025e4    000000d0     inv_mpu.o (.text.mpu_set_lpf)
-                  000026b4    000000cc     motor.o (.text.Motor_Speed_Get)
-                  00002780    000000c4     trace.o (.text.GROUP1_IRQHandler)
-                  00002844    000000c4     inv_mpu.o (.text.mpu_set_gyro_fsr)
-                  00002908    000000c4     mspm0_i2c.o (.text.mspm0_i2c_write)
-                  000029cc    000000c0     trace.o (.text.Motor_Ctrl)
-                  00002a8c    000000bc     inv_mpu.o (.text.mpu_configure_fifo)
-                  00002b48    000000b8     No_Mcu_Ganv_Grayscale_Sensor.o (.text.Get_Analog_value)
-                  00002c00    000000b8     inv_mpu.o (.text.mpu_set_dmp_state)
-                  00002cb8    000000b4     flash.o (.text.writeToFlash)
-                  00002d6c    000000b0     ti_msp_dl_config.o (.text.SYSCFG_DL_initPower)
-                  00002e1c    000000ac     inv_mpu.o (.text.mpu_read_mem)
-                  00002ec8    000000ac     inv_mpu.o (.text.mpu_write_mem)
-                  00002f74    000000aa     No_Mcu_Ganv_Grayscale_Sensor.o (.text.normalizeAnalogValues)
-                  0000301e    00000002     --HOLE-- [fill = 0]
-                  00003020    000000a0     motor.o (.text.Motor_Encoder_Update)
-                  000030c0    0000009c     inv_mpu.o (.text.mpu_set_int_latched)
-                  0000315c    00000098     inv_mpu_dmp_motion_driver.o (.text.dmp_set_fifo_rate)
-                  000031f4    00000098     main.o (.text.main)
-                  0000328c    00000096     mpu6050.o (.text.inv_row_2_scale)
-                  00003322    00000002     --HOLE-- [fill = 0]
-                  00003324    00000090     trace.o (.text.Calculate_Position_Error)
-                  000033b4    00000090     motor.o (.text.Motor_Driver)
-                  00003444    00000090     motor.o (.text.Motor_Init)
-                  000034d4    00000090     ti_msp_dl_config.o (.text.SYSCFG_DL_PWM_MOTOR_init)
-                  00003564    0000008c     libclang_rt.builtins.a : mulsf3.S.obj (.text.__mulsf3)
-                  000035f0    00000088     encoder.o (.text.Encoder_HandleGPIOA)
-                  00003678    00000088     adc.o (.text.adc_getValue)
-                  00003700    00000084     clock.o (.text.__NVIC_SetPriority)
-                  00003784    00000084     ti_msp_dl_config.o (.text.__NVIC_SetPriority)
-                  00003808    00000082     libclang_rt.builtins.a : divsf3.S.obj (.text.__divsf3)
-                  0000388a    00000002     --HOLE-- [fill = 0]
-                  0000388c    00000080     led.o (.text.LED_setAll)
-                  0000390c    0000007c     libc.a : copy_decompress_lzss.c.obj (.text:decompress:lzss)
-                  00003988    00000074     libclang_rt.builtins.a : comparedf2.c.obj (.text.__gedf2)
-                  000039fc    00000004     startup_mspm0g350x_ticlang.o (.text.Default_Handler)
-                  00003a00    00000074     libclang_rt.builtins.a : truncdfsf2.S.obj (.text.__truncdfsf2)
+                  00001ca8    00000108     trace.o (.text.Trace_init)
+                  00001db0    00000104     driverlib.a : dl_timer.o (.text.DL_Timer_initFourCCPWMMode)
+                  00001eb4    00000100     inv_mpu.o (.text.mpu_lp_accel_mode)
+                  00001fb4    000000fc     driverlib.a : dl_timer.o (.text.DL_Timer_initTimerMode)
+                  000020b0    000000ec     inv_mpu.o (.text.mpu_set_sample_rate)
+                  0000219c    000000e4     libclang_rt.builtins.a : muldf3.S.obj (.text.__muldf3)
+                  00002280    000000e4     inv_mpu.o (.text.mpu_set_accel_fsr)
+                  00002364    000000d8     driverlib.a : dl_flashctl.o (.text.DL_FlashCTL_unprotectSector)
+                  0000243c    000000d8     libclang_rt.builtins.a : addsf3.S.obj (.text)
+                  00002514    000000d4     inv_mpu.o (.text.set_int_enable)
+                  000025e8    000000d0     inv_mpu.o (.text.mpu_set_lpf)
+                  000026b8    000000cc     motor.o (.text.Motor_Speed_Get)
+                  00002784    000000c4     trace.o (.text.GROUP1_IRQHandler)
+                  00002848    000000c4     inv_mpu.o (.text.mpu_set_gyro_fsr)
+                  0000290c    000000c4     mspm0_i2c.o (.text.mspm0_i2c_write)
+                  000029d0    000000c0     trace.o (.text.Motor_Ctrl)
+                  00002a90    000000bc     inv_mpu.o (.text.mpu_configure_fifo)
+                  00002b4c    000000b8     No_Mcu_Ganv_Grayscale_Sensor.o (.text.Get_Analog_value)
+                  00002c04    000000b8     inv_mpu.o (.text.mpu_set_dmp_state)
+                  00002cbc    000000b4     flash.o (.text.writeToFlash)
+                  00002d70    000000b0     ti_msp_dl_config.o (.text.SYSCFG_DL_initPower)
+                  00002e20    000000ac     inv_mpu.o (.text.mpu_read_mem)
+                  00002ecc    000000ac     inv_mpu.o (.text.mpu_write_mem)
+                  00002f78    000000aa     No_Mcu_Ganv_Grayscale_Sensor.o (.text.normalizeAnalogValues)
+                  00003022    00000002     --HOLE-- [fill = 0]
+                  00003024    000000a0     motor.o (.text.Motor_Encoder_Update)
+                  000030c4    0000009c     inv_mpu.o (.text.mpu_set_int_latched)
+                  00003160    00000098     inv_mpu_dmp_motion_driver.o (.text.dmp_set_fifo_rate)
+                  000031f8    00000098     main.o (.text.main)
+                  00003290    00000096     mpu6050.o (.text.inv_row_2_scale)
+                  00003326    00000002     --HOLE-- [fill = 0]
+                  00003328    00000090     trace.o (.text.Calculate_Position_Error)
+                  000033b8    00000090     motor.o (.text.Motor_Driver)
+                  00003448    00000090     motor.o (.text.Motor_Init)
+                  000034d8    00000090     ti_msp_dl_config.o (.text.SYSCFG_DL_PWM_MOTOR_init)
+                  00003568    0000008c     libclang_rt.builtins.a : mulsf3.S.obj (.text.__mulsf3)
+                  000035f4    00000088     encoder.o (.text.Encoder_HandleGPIOA)
+                  0000367c    00000088     adc.o (.text.adc_getValue)
+                  00003704    00000084     clock.o (.text.__NVIC_SetPriority)
+                  00003788    00000084     ti_msp_dl_config.o (.text.__NVIC_SetPriority)
+                  0000380c    00000082     libclang_rt.builtins.a : divsf3.S.obj (.text.__divsf3)
+                  0000388e    00000002     --HOLE-- [fill = 0]
+                  00003890    00000080     led.o (.text.LED_setAll)
+                  00003910    0000007c     libc.a : copy_decompress_lzss.c.obj (.text:decompress:lzss)
+                  0000398c    00000074     libclang_rt.builtins.a : comparedf2.c.obj (.text.__gedf2)
+                  00003a00    00000074                            : truncdfsf2.S.obj (.text.__truncdfsf2)
                   00003a74    00000074     inv_mpu.o (.text.mpu_get_accel_fsr)
                   00003ae8    00000072     No_Mcu_Ganv_Grayscale_Sensor.o (.text.No_MCU_Ganv_Sensor_Init_Frist)
                   00003b5a    00000002     --HOLE-- [fill = 0]
@@ -331,13 +330,14 @@ section   page    origin      length       input sections
                   00005c46    00000002     --HOLE-- [fill = 0]
                   00005c48    00000008     libclang_rt.builtins.a : aeabi_memcpy.S.obj (.text.__aeabi_memcpy)
                   00005c50    00000006     libc.a : exit.c.obj (.text:abort)
-                  00005c56    00000004     libsysbm.a : hostexit.c.obj (.text.HOSTexit)
-                  00005c5a    00000004     startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
-                  00005c5e    00000002     --HOLE-- [fill = 0]
-                  00005c60    00000010     libc.a : boot_cortex_m.c.obj (.tramp._c_int00_noargs.1)
-                  00005c70    00000004            : pre_init.c.obj (.text._system_pre_init)
-                  00005c74    00000010     driverlib.a : dl_flashctl.o (.tramp.DL_FlashCTL_executeCommandFromRAM.1)
-                  00005c84    0000000c     --HOLE-- [fill = 0]
+                  00005c56    00000004     startup_mspm0g350x_ticlang.o (.text.Default_Handler)
+                  00005c5a    00000004     libsysbm.a : hostexit.c.obj (.text.HOSTexit)
+                  00005c5e    00000004     startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
+                  00005c62    00000002     --HOLE-- [fill = 0]
+                  00005c64    00000010     libc.a : boot_cortex_m.c.obj (.tramp._c_int00_noargs.1)
+                  00005c74    00000004            : pre_init.c.obj (.text._system_pre_init)
+                  00005c78    00000010     driverlib.a : dl_flashctl.o (.tramp.DL_FlashCTL_executeCommandFromRAM.1)
+                  00005c88    00000008     --HOLE-- [fill = 0]
 
 .TI.ramfunc 
 *          0    00006958    00000060     RUN ADDR = 20200548
@@ -473,9 +473,9 @@ MODULE SUMMARY
        Total:                           584     0         0      
                                                                  
     .\User\trace\
-       trace.o                          1444    10        649    
+       trace.o                          1448    10        649    
     +--+--------------------------------+-------+---------+---------+
-       Total:                           1444    10        649    
+       Total:                           1448    10        649    
                                                                  
     D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/lib/ticlang/m0p/mspm0g1x0x_g3x0x/driverlib.a
        dl_timer.o                       608     0         0      
@@ -539,7 +539,7 @@ MODULE SUMMARY
        Stack:                           0       0         512    
        Linker Generated:                0       84        0      
     +--+--------------------------------+-------+---------+---------+
-       Grand Total:                     23642   3546      1859   
+       Grand Total:                     23646   3546      1859   
 
 
 LINKER GENERATED COPY TABLES
@@ -565,9 +565,9 @@ callee name               trampoline name
    callee addr  tramp addr   call addr  call info
 --------------  -----------  ---------  ----------------
 _c_int00_noargs           $Tramp$TT$L$PI$$_c_int00_noargs
-   000051d9     00005c60     00005c5a   startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
+   000051d9     00005c64     00005c5e   startup_mspm0g350x_ticlang.o (.text.Reset_Handler)
 DL_FlashCTL_executeCommandFromRAM  $Tramp$TT$L$PI$$DL_FlashCTL_executeCommandFromRAM
-   20200549     00005c74     0000528c   driverlib.a : dl_flashctl.o (.text.DL_FlashCTL_programMemoryFromRAM64)
+   20200549     00005c78     0000528c   driverlib.a : dl_flashctl.o (.text.DL_FlashCTL_programMemoryFromRAM64)
                              00005636               : dl_flashctl.o (.text.DL_FlashCTL_eraseMemoryFromRAM)
 
 [2 trampolines]
@@ -578,49 +578,49 @@ GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name
 
 address   name                                
 -------   ----                                
-000039fd  ADC0_IRQHandler                     
-000039fd  ADC1_IRQHandler                     
+00005c57  ADC0_IRQHandler                     
+00005c57  ADC1_IRQHandler                     
 20200380  ADC_VALUE                           
-000039fd  AES_IRQHandler                      
+00005c57  AES_IRQHandler                      
 202004cc  Anolog                              
-00005c56  C$$EXIT                             
-000039fd  CANFD0_IRQHandler                   
-00003325  Calculate_Position_Error            
+00005c5a  C$$EXIT                             
+00005c57  CANFD0_IRQHandler                   
+00003329  Calculate_Position_Error            
 000007a5  Control                             
-000039fd  DAC0_IRQHandler                     
+00005c57  DAC0_IRQHandler                     
 000048dd  DL_ADC12_setClockConfig             
 00005c21  DL_Common_delayCycles               
 00004405  DL_DMA_initChannel                  
 00005629  DL_FlashCTL_eraseMemoryFromRAM      
 00005275  DL_FlashCTL_programMemoryFromRAM64  
-00002361  DL_FlashCTL_unprotectSector         
+00002365  DL_FlashCTL_unprotectSector         
 00003fb5  DL_I2C_fillControllerTXFIFO         
 00004a1d  DL_I2C_flushControllerTXFIFO        
 0000524d  DL_I2C_setClockConfig               
-00001ca9  DL_Timer_initFourCCPWMMode          
-00001fb1  DL_Timer_initTimerMode              
+00001db1  DL_Timer_initFourCCPWMMode          
+00001fb5  DL_Timer_initTimerMode              
 00005571  DL_Timer_setCaptCompUpdateMethod    
 000058b1  DL_Timer_setCaptureCompareOutCtl    
 00005bad  DL_Timer_setCaptureCompareValue     
 0000558d  DL_Timer_setClockConfig             
 00004665  DL_UART_init                        
 00005b57  DL_UART_setClockConfig              
-000039fd  DMA_IRQHandler                      
-000039fd  Default_Handler                     
+00005c57  DMA_IRQHandler                      
+00005c57  Default_Handler                     
 2020049c  Digtal                              
 000052dd  Encoder_GetDelta                    
-000035f1  Encoder_HandleGPIOA                 
+000035f5  Encoder_HandleGPIOA                 
 00004f69  Encoder_HandleGPIOB                 
 00003d69  Encoder_Init                        
-000039fd  GROUP0_IRQHandler                   
-00002781  GROUP1_IRQHandler                   
-00002b49  Get_Analog_value                    
+00005c57  GROUP0_IRQHandler                   
+00002785  GROUP1_IRQHandler                   
+00002b4d  Get_Analog_value                    
 00004a95  Get_Anolog_Value                    
 00005bdd  Get_Digtal_For_User                 
-00005c57  HOSTexit                            
-000039fd  HardFault_Handler                   
-000039fd  I2C0_IRQHandler                     
-000039fd  I2C1_IRQHandler                     
+00005c5b  HOSTexit                            
+00005c57  HardFault_Handler                   
+00005c57  I2C0_IRQHandler                     
+00005c57  I2C1_IRQHandler                     
 00000571  Key_Process                         
 00005acd  LED_KEY_Blink_SetInterval           
 00005929  LED_KEY_Blink_Start                 
@@ -628,56 +628,56 @@ address   name
 00004ad1  LED_KEY_Blink_Update                
 00005c2b  LED_init                            
 00004ce5  LED_off                             
-0000388d  LED_setAll                          
+00003891  LED_setAll                          
 00004d19  LED_toggle                          
 000015a9  MPU6050_Init                        
-000029cd  Motor_Ctrl                          
-00003445  Motor_Init                          
-000039fd  NMI_Handler                         
+000029d1  Motor_Ctrl                          
+00003449  Motor_Init                          
+00005c57  NMI_Handler                         
 000012a9  No_MCU_Ganv_Sensor_Init             
 00003ae9  No_MCU_Ganv_Sensor_Init_Frist       
 00004899  No_Mcu_Ganv_Sensor_Task_Without_tick
 00000dc1  PID_Calc                            
 00004315  PID_Init                            
-000039fd  PendSV_Handler                      
-000039fd  RTC_IRQHandler                      
-00005c5b  Reset_Handler                       
-000039fd  SPI0_IRQHandler                     
-000039fd  SPI1_IRQHandler                     
-000039fd  SVC_Handler                         
+00005c57  PendSV_Handler                      
+00005c57  RTC_IRQHandler                      
+00005c5f  Reset_Handler                       
+00005c57  SPI0_IRQHandler                     
+00005c57  SPI1_IRQHandler                     
+00005c57  SVC_Handler                         
 00003b5d  SYSCFG_DL_ADC_VOLTAGE_init          
 00005161  SYSCFG_DL_DMA_CH0_init              
 00005c3f  SYSCFG_DL_DMA_init                  
 00000c01  SYSCFG_DL_GPIO_init                 
 00004071  SYSCFG_DL_I2C_MPU6050_init          
 000040c9  SYSCFG_DL_I2C_OLED_init             
-000034d5  SYSCFG_DL_PWM_MOTOR_init            
+000034d9  SYSCFG_DL_PWM_MOTOR_init            
 00004de9  SYSCFG_DL_SYSCTL_init               
 00005c07  SYSCFG_DL_SYSTICK_init              
 00004f95  SYSCFG_DL_TIMER_Encoder_init        
 000046ad  SYSCFG_DL_UART_0_init               
 0000491d  SYSCFG_DL_UART_1_init               
 000041d1  SYSCFG_DL_init                      
-00002d6d  SYSCFG_DL_initPower                 
+00002d71  SYSCFG_DL_initPower                 
 00005af5  SysTick_Handler                     
 00005b09  SysTick_Init                        
-000039fd  TIMA0_IRQHandler                    
-000039fd  TIMA1_IRQHandler                    
-000039fd  TIMG0_IRQHandler                    
-000039fd  TIMG12_IRQHandler                   
-000039fd  TIMG6_IRQHandler                    
-000039fd  TIMG7_IRQHandler                    
-000039fd  TIMG8_IRQHandler                    
+00005c57  TIMA0_IRQHandler                    
+00005c57  TIMA1_IRQHandler                    
+00005c57  TIMG0_IRQHandler                    
+00005c57  TIMG12_IRQHandler                   
+00005c57  TIMG6_IRQHandler                    
+00005c57  TIMG7_IRQHandler                    
+00005c57  TIMG8_IRQHandler                    
 00005b69  TI_memcpy_small                     
 00005bf9  TI_memset_small                     
 2020053c  Tick                                
 00005bbd  Tick_SysTickCallback                
 00005189  Tick_delay                          
-00001dad  Trace_init                          
-000039fd  UART0_IRQHandler                    
-000039fd  UART1_IRQHandler                    
-000039fd  UART2_IRQHandler                    
-000039fd  UART3_IRQHandler                    
+00001ca9  Trace_init                          
+00005c57  UART0_IRQHandler                    
+00005c57  UART1_IRQHandler                    
+00005c57  UART2_IRQHandler                    
+00005c57  UART3_IRQHandler                    
 20208000  __STACK_END                         
 00000200  __STACK_SIZE                        
 00000000  __TI_ATRegion0_region_sz            
@@ -695,7 +695,7 @@ address   name
 000069d8  __TI_Handler_Table_Base             
 000069e4  __TI_Handler_Table_Limit            
 00004581  __TI_auto_init_nopinit              
-0000390d  __TI_decompress_lzss                
+00003911  __TI_decompress_lzss                
 00005b7b  __TI_decompress_none                
 ffffffff  __TI_pprof_out_hndl                 
 ffffffff  __TI_prof_data_size                 
@@ -704,7 +704,7 @@ ffffffff  __TI_prof_data_start
 00006a00  __TI_table_binit                    
 00005bcd  __TI_zero_init                      
 0000111f  __adddf3                            
-00002443  __addsf3                            
+00002447  __addsf3                            
 00003a01  __aeabi_d2f                         
 00004619  __aeabi_d2iz                        
 0000111f  __aeabi_dadd                        
@@ -714,19 +714,19 @@ ffffffff  __TI_prof_data_start
 00003df5  __aeabi_dcmple                      
 00003de1  __aeabi_dcmplt                      
 00001b9d  __aeabi_ddiv                        
-00002199  __aeabi_dmul                        
+0000219d  __aeabi_dmul                        
 00001115  __aeabi_dsub                        
 0000499d  __aeabi_f2d                         
 00004cad  __aeabi_f2iz                        
-00002443  __aeabi_fadd                        
+00002447  __aeabi_fadd                        
 00003e31  __aeabi_fcmpeq                      
 00003e6d  __aeabi_fcmpge                      
 00003e81  __aeabi_fcmpgt                      
 00003e59  __aeabi_fcmple                      
 00003e45  __aeabi_fcmplt                      
-00003809  __aeabi_fdiv                        
-00003565  __aeabi_fmul                        
-00002439  __aeabi_fsub                        
+0000380d  __aeabi_fdiv                        
+00003569  __aeabi_fmul                        
+0000243d  __aeabi_fsub                        
 00004fed  __aeabi_i2d                         
 00004b0d  __aeabi_i2f                         
 00004179  __aeabi_idiv                        
@@ -746,7 +746,7 @@ ffffffff  __TI_prof_data_start
 00003c35  __cmpdf2                            
 00004bfd  __cmpsf2                            
 00001b9d  __divdf3                            
-00003809  __divsf3                            
+0000380d  __divsf3                            
 00003c35  __eqdf2                             
 00004bfd  __eqsf2                             
 0000499d  __extendsfdf2                       
@@ -756,18 +756,18 @@ ffffffff  __TI_prof_data_start
 00004b0d  __floatsisf                         
 00005299  __floatunsidf                       
 000051b1  __floatunsisf                       
-00003989  __gedf2                             
+0000398d  __gedf2                             
 00004b49  __gesf2                             
-00003989  __gtdf2                             
+0000398d  __gtdf2                             
 00004b49  __gtsf2                             
 00003c35  __ledf2                             
 00004bfd  __lesf2                             
 00003c35  __ltdf2                             
 00004bfd  __ltsf2                             
 UNDEFED   __mpu_init                          
-00002199  __muldf3                            
+0000219d  __muldf3                            
 00004c39  __muldsi3                           
-00003565  __mulsf3                            
+00003569  __mulsf3                            
 00003c35  __nedf2                             
 00004bfd  __nesf2                             
 20207e00  __stack                             
@@ -776,13 +776,13 @@ UNDEFED   __mpu_init
 20200000  __stop___llvm_prf_bits              
 20200000  __stop___llvm_prf_cnts              
 00001115  __subdf3                            
-00002439  __subsf3                            
+0000243d  __subsf3                            
 00003a01  __truncdfsf2                        
 000051d9  _c_int00_noargs                     
 UNDEFED   _system_post_cinit                  
-00005c71  _system_pre_init                    
+00005c75  _system_pre_init                    
 00005c51  abort                               
-00003679  adc_getValue                        
+0000367d  adc_getValue                        
 00004121  adjust_white_black                  
 20200540  base_target_speed                   
 00006a00  binit                               
@@ -797,7 +797,7 @@ UNDEFED   _system_post_cinit
 000055c5  dmp_load_motion_driver_firmware     
 00005b1d  dmp_register_android_orient_cb      
 00005b31  dmp_register_tap_cb                 
-0000315d  dmp_set_fifo_rate                   
+00003161  dmp_set_fifo_rate                   
 00001431  dmp_set_orientation                 
 00004811  dmp_set_shake_reject_thresh         
 00004e1b  dmp_set_shake_reject_time           
@@ -819,34 +819,34 @@ UNDEFED   _system_post_cinit
 20200544  last_key_time                       
 20200531  long_err_flag                       
 20200490  long_pressed_key_time               
-000031f5  main                                
+000031f9  main                                
 000052fd  memcmp                              
 20200228  motor_l                             
 202002d4  motor_r                             
 00003ef5  mpu6050_i2c_sda_unlock              
-00002a8d  mpu_configure_fifo                  
+00002a91  mpu_configure_fifo                  
 00003a75  mpu_get_accel_fsr                   
 00003f55  mpu_get_gyro_fsr                    
 00004d4d  mpu_get_sample_rate                 
 00001951  mpu_init                            
 00001a79  mpu_load_firmware                   
-00001eb1  mpu_lp_accel_mode                   
-00002e1d  mpu_read_mem                        
+00001eb5  mpu_lp_accel_mode                   
+00002e21  mpu_read_mem                        
 000009d5  mpu_reset_fifo                      
-0000227d  mpu_set_accel_fsr                   
+00002281  mpu_set_accel_fsr                   
 00000f75  mpu_set_bypass                      
-00002c01  mpu_set_dmp_state                   
-00002845  mpu_set_gyro_fsr                    
-000030c1  mpu_set_int_latched                 
-000025e5  mpu_set_lpf                         
-000020ad  mpu_set_sample_rate                 
+00002c05  mpu_set_dmp_state                   
+00002849  mpu_set_gyro_fsr                    
+000030c5  mpu_set_int_latched                 
+000025e9  mpu_set_lpf                         
+000020b1  mpu_set_sample_rate                 
 00001821  mpu_set_sensors                     
-00002ec9  mpu_write_mem                       
+00002ecd  mpu_write_mem                       
 00004b85  mspm0_delay_ms                      
 00005019  mspm0_get_clock_ms                  
 000016ed  mspm0_i2c_read                      
-00002909  mspm0_i2c_write                     
-00002f75  normalizeAnalogValues               
+0000290d  mspm0_i2c_write                     
+00002f79  normalizeAnalogValues               
 00004d81  readBlackFromFlash                  
 00004db5  readWhiteFromFlash                  
 000068b0  reg                                 
@@ -858,7 +858,7 @@ UNDEFED   _system_post_cinit
 00005045  uart0_send_char                     
 00004bc1  uart0_send_string                   
 202004fc  white                               
-00002cb9  writeToFlash                        
+00002cbd  writeToFlash                        
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -899,76 +899,48 @@ address   name
 00001a79  mpu_load_firmware                   
 00001b9d  __aeabi_ddiv                        
 00001b9d  __divdf3                            
-00001ca9  DL_Timer_initFourCCPWMMode          
-00001dad  Trace_init                          
-00001eb1  mpu_lp_accel_mode                   
-00001fb1  DL_Timer_initTimerMode              
-000020ad  mpu_set_sample_rate                 
-00002199  __aeabi_dmul                        
-00002199  __muldf3                            
-0000227d  mpu_set_accel_fsr                   
-00002361  DL_FlashCTL_unprotectSector         
-00002439  __aeabi_fsub                        
-00002439  __subsf3                            
-00002443  __addsf3                            
-00002443  __aeabi_fadd                        
-000025e5  mpu_set_lpf                         
-00002781  GROUP1_IRQHandler                   
-00002845  mpu_set_gyro_fsr                    
-00002909  mspm0_i2c_write                     
-000029cd  Motor_Ctrl                          
-00002a8d  mpu_configure_fifo                  
-00002b49  Get_Analog_value                    
-00002c01  mpu_set_dmp_state                   
-00002cb9  writeToFlash                        
-00002d6d  SYSCFG_DL_initPower                 
-00002e1d  mpu_read_mem                        
-00002ec9  mpu_write_mem                       
-00002f75  normalizeAnalogValues               
-000030c1  mpu_set_int_latched                 
-0000315d  dmp_set_fifo_rate                   
-000031f5  main                                
-00003325  Calculate_Position_Error            
-00003445  Motor_Init                          
-000034d5  SYSCFG_DL_PWM_MOTOR_init            
-00003565  __aeabi_fmul                        
-00003565  __mulsf3                            
-000035f1  Encoder_HandleGPIOA                 
-00003679  adc_getValue                        
-00003809  __aeabi_fdiv                        
-00003809  __divsf3                            
-0000388d  LED_setAll                          
-0000390d  __TI_decompress_lzss                
-00003989  __gedf2                             
-00003989  __gtdf2                             
-000039fd  ADC0_IRQHandler                     
-000039fd  ADC1_IRQHandler                     
-000039fd  AES_IRQHandler                      
-000039fd  CANFD0_IRQHandler                   
-000039fd  DAC0_IRQHandler                     
-000039fd  DMA_IRQHandler                      
-000039fd  Default_Handler                     
-000039fd  GROUP0_IRQHandler                   
-000039fd  HardFault_Handler                   
-000039fd  I2C0_IRQHandler                     
-000039fd  I2C1_IRQHandler                     
-000039fd  NMI_Handler                         
-000039fd  PendSV_Handler                      
-000039fd  RTC_IRQHandler                      
-000039fd  SPI0_IRQHandler                     
-000039fd  SPI1_IRQHandler                     
-000039fd  SVC_Handler                         
-000039fd  TIMA0_IRQHandler                    
-000039fd  TIMA1_IRQHandler                    
-000039fd  TIMG0_IRQHandler                    
-000039fd  TIMG12_IRQHandler                   
-000039fd  TIMG6_IRQHandler                    
-000039fd  TIMG7_IRQHandler                    
-000039fd  TIMG8_IRQHandler                    
-000039fd  UART0_IRQHandler                    
-000039fd  UART1_IRQHandler                    
-000039fd  UART2_IRQHandler                    
-000039fd  UART3_IRQHandler                    
+00001ca9  Trace_init                          
+00001db1  DL_Timer_initFourCCPWMMode          
+00001eb5  mpu_lp_accel_mode                   
+00001fb5  DL_Timer_initTimerMode              
+000020b1  mpu_set_sample_rate                 
+0000219d  __aeabi_dmul                        
+0000219d  __muldf3                            
+00002281  mpu_set_accel_fsr                   
+00002365  DL_FlashCTL_unprotectSector         
+0000243d  __aeabi_fsub                        
+0000243d  __subsf3                            
+00002447  __addsf3                            
+00002447  __aeabi_fadd                        
+000025e9  mpu_set_lpf                         
+00002785  GROUP1_IRQHandler                   
+00002849  mpu_set_gyro_fsr                    
+0000290d  mspm0_i2c_write                     
+000029d1  Motor_Ctrl                          
+00002a91  mpu_configure_fifo                  
+00002b4d  Get_Analog_value                    
+00002c05  mpu_set_dmp_state                   
+00002cbd  writeToFlash                        
+00002d71  SYSCFG_DL_initPower                 
+00002e21  mpu_read_mem                        
+00002ecd  mpu_write_mem                       
+00002f79  normalizeAnalogValues               
+000030c5  mpu_set_int_latched                 
+00003161  dmp_set_fifo_rate                   
+000031f9  main                                
+00003329  Calculate_Position_Error            
+00003449  Motor_Init                          
+000034d9  SYSCFG_DL_PWM_MOTOR_init            
+00003569  __aeabi_fmul                        
+00003569  __mulsf3                            
+000035f5  Encoder_HandleGPIOA                 
+0000367d  adc_getValue                        
+0000380d  __aeabi_fdiv                        
+0000380d  __divsf3                            
+00003891  LED_setAll                          
+00003911  __TI_decompress_lzss                
+0000398d  __gedf2                             
+0000398d  __gtdf2                             
 00003a01  __aeabi_d2f                         
 00003a01  __truncdfsf2                        
 00003a75  mpu_get_accel_fsr                   
@@ -1097,10 +1069,38 @@ address   name
 00005c49  __aeabi_memcpy4                     
 00005c49  __aeabi_memcpy8                     
 00005c51  abort                               
-00005c56  C$$EXIT                             
-00005c57  HOSTexit                            
-00005c5b  Reset_Handler                       
-00005c71  _system_pre_init                    
+00005c57  ADC0_IRQHandler                     
+00005c57  ADC1_IRQHandler                     
+00005c57  AES_IRQHandler                      
+00005c57  CANFD0_IRQHandler                   
+00005c57  DAC0_IRQHandler                     
+00005c57  DMA_IRQHandler                      
+00005c57  Default_Handler                     
+00005c57  GROUP0_IRQHandler                   
+00005c57  HardFault_Handler                   
+00005c57  I2C0_IRQHandler                     
+00005c57  I2C1_IRQHandler                     
+00005c57  NMI_Handler                         
+00005c57  PendSV_Handler                      
+00005c57  RTC_IRQHandler                      
+00005c57  SPI0_IRQHandler                     
+00005c57  SPI1_IRQHandler                     
+00005c57  SVC_Handler                         
+00005c57  TIMA0_IRQHandler                    
+00005c57  TIMA1_IRQHandler                    
+00005c57  TIMG0_IRQHandler                    
+00005c57  TIMG12_IRQHandler                   
+00005c57  TIMG6_IRQHandler                    
+00005c57  TIMG7_IRQHandler                    
+00005c57  TIMG8_IRQHandler                    
+00005c57  UART0_IRQHandler                    
+00005c57  UART1_IRQHandler                    
+00005c57  UART2_IRQHandler                    
+00005c57  UART3_IRQHandler                    
+00005c5a  C$$EXIT                             
+00005c5b  HOSTexit                            
+00005c5f  Reset_Handler                       
+00005c75  _system_pre_init                    
 00006888  test                                
 000068b0  reg                                 
 0000690e  hw                                  

@@ -8,7 +8,7 @@
 #include "math.h"
 
 #define MOTOR_FILTER 0.3
-#define POLL_INTERVAL_MS 99      // 轮询间隔
+#define POLL_INTERVAL_MS 50      // 轮询间隔
 #define MOTOR_SPEED_RERATIO 30u  // 电机减速比
 #define PULSE_PRE_ROUND 11       // 一圈多少个脉冲
 #define RADIUS_OF_TYRE 32.5f        // 轮胎半径，单位毫米
