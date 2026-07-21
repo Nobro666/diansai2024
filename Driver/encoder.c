@@ -77,8 +77,8 @@ int32_t Encoder_GetDelta(EncoderUnit *enc)
  */
 void Encoder_HandleGPIOA(uint32_t pending)
 {
-    /* encL: PA7 = 相位A, PA26 = 相位B */
-    if (pending & DL_GPIO_IIDX_DIO7) {
+    /* encL: PA7(IIDX=7) = 相位A, PA26 = 相位B */
+    if (pending == DL_GPIO_IIDX_DIO7) {
         if (DL_GPIO_readPins(encL.portB, encL.pinB)) {
             encL.count++;   /* B为高 → 正转 */
         } else {
@@ -86,9 +86,8 @@ void Encoder_HandleGPIOA(uint32_t pending)
         }
         DL_GPIO_clearInterruptStatus(GPIOA, DL_GPIO_PIN_7);
     }
-
-    /* encR: PA28 = 相位A, PB6 = 相位B */
-    if (pending & DL_GPIO_IIDX_DIO28) {
+    /* encR: PA28(IIDX=28) = 相位A, PB6 = 相位B */
+    else if (pending == DL_GPIO_IIDX_DIO28) {
         if (DL_GPIO_readPins(encR.portB, encR.pinB)) {
             encR.count++;
         } else {
@@ -99,13 +98,12 @@ void Encoder_HandleGPIOA(uint32_t pending)
 }
 
 /**
- * @brief GPIOB 编码器中断处理
- * @note  当前配置中 PB6 是 encR 的相位B(仅方向判断, 不产生中断)
- *        但若硬件噪声误触发, 清除中断防止风暴
+ * @brief GPIOB 编码器中断处理(安全网, 清除意外中断)
+ * @note  pending 是 IIDX 值, 需转换为位掩码再清除
  */
 void Encoder_HandleGPIOB(uint32_t pending)
 {
-    if (pending) {
-        DL_GPIO_clearInterruptStatus(GPIOB, pending);
+    if (pending && pending < 32) {
+        DL_GPIO_clearInterruptStatus(GPIOB, (1UL << pending));
     }
 }

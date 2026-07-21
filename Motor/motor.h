@@ -8,11 +8,11 @@
 #include "math.h"
 
 #define MOTOR_FILTER 0.3
-#define POLL_INTERVAL_MS 10      // 轮询间隔
+#define POLL_INTERVAL_MS 99      // 轮询间隔
 #define MOTOR_SPEED_RERATIO 30u  // 电机减速比
 #define PULSE_PRE_ROUND 11       // 一圈多少个脉冲
 #define RADIUS_OF_TYRE 32.5f        // 轮胎半径，单位毫米
-#define MULTIPLE_ENCODER 4       // 编码器倍频,采用T1&T2计数，倍数*4
+#define MULTIPLE_ENCODER 1       // 编码器倍频,GPIO中断方式仅捕获单边沿(1x)
 #define LINE_SPEED_C RADIUS_OF_TYRE * 2 * 3.1415926535897
 
 typedef struct _ENCODER {

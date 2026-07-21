@@ -7,9 +7,9 @@
  */
 typedef struct {
     GPIO_Regs *portA;       // 相位A(计数引脚)端口
-    uint16_t pinA;          // 相位A引脚掩码
+    uint32_t pinA;          // 相位A引脚掩码
     GPIO_Regs *portB;       // 相位B(方向引脚)端口
-    uint16_t pinB;          // 相位B引脚掩码
+    uint32_t pinB;          // 相位B引脚掩码
     volatile int32_t count; // 累计脉冲计数(正转++, 反转--)
     int32_t lastCount;      // 上次速度计算时的计数值
     float speed_rpm;        // 转速 (RPM)

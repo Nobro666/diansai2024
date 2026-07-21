@@ -87,7 +87,7 @@ PID tracking_pid;
 Motor motor_l;
 Motor motor_r;
 
-float base_target_speed = 0;
+float base_target_speed = 40;
 
 void Motor_Ctrl(float err)
 {
@@ -105,9 +105,9 @@ void Motor_Ctrl(float err)
     if (right_target > max_speed)  right_target = max_speed;
     if (right_target < -max_speed) right_target = -max_speed;
 
-    // 死区
-    if (fabs(left_target) < 20.0f)  left_target = 0.0f;
-    if (fabs(right_target) < 20.0f) right_target = 0.0f;
+    // // 死区
+    // if (fabs(left_target) < 20.0f)  left_target = 0.0f;
+    // if (fabs(right_target) < 20.0f) right_target = 0.0f;
 
     // 下发给电机 PID
     motor_l.speed_set = left_target;
@@ -150,21 +150,21 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 1. 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, POSITION, 40.0f, 20.0f, 10, 0.0f, 0.0f);
+    PID_Init(&tracking_pid, POSITION, 20.0f, 5.0f, 0, 0.0f, 0.0f);
     // 2. 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
     motor_r.speed_set = 0;
     //电机初始化
-    Motor_Init(&motor_r, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_1_INDEX, GPIOB ,DL_GPIO_PIN_9, GPIOB, DL_GPIO_PIN_8);
-    Motor_Init(&motor_l, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_0_INDEX, GPIOA ,DL_GPIO_PIN_21, GPIOA, DL_GPIO_PIN_22);
+    Motor_Init(&motor_r, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_1_INDEX, GPIOB ,DL_GPIO_PIN_8, GPIOB, DL_GPIO_PIN_9);
+    Motor_Init(&motor_l, TIMER_Encoder_INST, PWM_MOTOR_INST, DL_TIMER_CC_0_INDEX, GPIOA ,DL_GPIO_PIN_22, GPIOA, DL_GPIO_PIN_21);
     //使能电机驱动芯片 (拉高STBY引脚)
     DL_GPIO_setPins(GPIO_MOTOR_PIN_STBY_PORT, GPIO_MOTOR_PIN_STBY_PIN);
     //编码器初始化(GPIO中断:相位A计数+相位B判方向,用Tick计时)
     Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
     Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
     //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 3200.0f, 1600.0f, 3, 0, 0);
-    motor_r.PidInit(&motor_r, DELTA, 3200.0f, 1600.0f, 3, 0, 0);
+    motor_l.PidInit(&motor_l, DELTA, 3200.0f, 1600.0f, 10, 0, 0);
+    motor_r.PidInit(&motor_r, DELTA, 3200.0f, 1600.0f, 10, 0, 0);
 }
 
 
@@ -259,7 +259,7 @@ void GROUP1_IRQHandler(void)
 	    // 读取Group1的中断寄存器并清除中断标志位
     uint32_t pending = DL_GPIO_getPendingInterrupt(GPIOA);
 	
-    if(pending & GRAY_IN_IN_KEY_IIDX){
+    if(pending == GRAY_IN_IN_KEY_IIDX){
             /* 防抖处理 */
             if ((Tick - last_key_time) < DEBOUNCE_TIME_MS) {
                 DL_GPIO_clearInterruptStatus(GPIOA, GRAY_IN_IN_KEY_PIN);
@@ -272,18 +272,19 @@ void GROUP1_IRQHandler(void)
                 last_key_time = Tick;
             }
             DL_GPIO_clearInterruptStatus(GPIOA, GRAY_IN_IN_KEY_PIN);
+        return;
     }
 
-    /* 编码器中断处理(PA7=encL, PA28=encR 相位A脉冲计数) */
-    Encoder_HandleGPIOA(pending);
-
-    /* 清除 GPIOA 其它未处理中断 */
-    uint32_t remainingA = pending & ~(GRAY_IN_IN_KEY_IIDX | DL_GPIO_IIDX_DIO7 | DL_GPIO_IIDX_DIO28);
-    if (remainingA) {
-        DL_GPIO_clearInterruptStatus(GPIOA, remainingA);
+    /* encoder PA7/PA28 */
+    if (pending == DL_GPIO_IIDX_DIO7 || pending == DL_GPIO_IIDX_DIO28) {
+        Encoder_HandleGPIOA(pending);
+        return;
     }
-
-    /* GPIOB 编码器中断处理 */
+    /* unknown GPIOA: IIDX to pin mask, clear */
+    if (pending > 0 && pending < 32) {
+        DL_GPIO_clearInterruptStatus(GPIOA, (1UL << pending));
+    }
+    /* GPIOB safety net */
     uint32_t pendingB = DL_GPIO_getPendingInterrupt(GPIOB);
     Encoder_HandleGPIOB(pendingB);
 }
