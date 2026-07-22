@@ -208,6 +208,12 @@ extern "C" {
 #define GRAY_IN_IN_KEY_IIDX                                 (DL_GPIO_IIDX_DIO14)
 #define GRAY_IN_IN_KEY_PIN                                      (DL_GPIO_PIN_14)
 #define GRAY_IN_IN_KEY_IOMUX                                     (IOMUX_PINCM36)
+/* Port definition for Pin Group BUFFER */
+#define BUFFER_PORT                                                      (GPIOB)
+
+/* Defines for PIN_0: GPIOB.7 with pinCMx 24 on package pin 59 */
+#define BUFFER_PIN_0_PIN                                         (DL_GPIO_PIN_7)
+#define BUFFER_PIN_0_IOMUX                                       (IOMUX_PINCM24)
 /* Defines for BIN2: GPIOB.8 with pinCMx 25 on package pin 60 */
 #define GPIO_MOTOR_BIN2_PORT                                             (GPIOB)
 #define GPIO_MOTOR_BIN2_PIN                                      (DL_GPIO_PIN_8)

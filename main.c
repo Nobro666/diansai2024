@@ -52,6 +52,7 @@ extern unsigned short white[8] ;     // 存储白色校准值的数组
 extern unsigned short black[8];     // 存储黑色校准值的数组
 extern unsigned short Normal[8];          // 归一化值数组
 extern No_MCU_Sensor sensor;
+float Yaw_Angle=0;
 
 
 int main(void)
@@ -96,7 +97,9 @@ int main(void)
     
     //初始化陀螺仪
     MPU6050_Init();
+    Tick_delay(2000); // 原地静止 2 秒校准
 	// float Yaw_Angle=0;
+
     /* 主应用程序循环 */
     while (1)
     {
@@ -104,7 +107,7 @@ int main(void)
         // DL_TimerA_setCaptureCompareValue(PWM_MOTOR_INST,600,DL_TIMER_CC_0_INDEX);
         // DL_GPIO_setPins(GPIO_MOTOR_AIN1_PORT, GPIO_MOTOR_AIN1_PIN);
         // DL_GPIO_clearPins(GPIO_MOTOR_AIN2_PORT, GPIO_MOTOR_AIN2_PIN);
-        Control();
+        // Control();
 
     }
 }

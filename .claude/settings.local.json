@@ -5,7 +5,9 @@
       "Bash(Select-Object:*)",
       "Bash(Format-Table:*)",
       "Bash(python:*)",
-      "Bash(where:*)"
+      "Bash(where:*)",
+      "Bash(apt-get install *)",
+      "Bash(winget install *)"
     ]
   }
 }
