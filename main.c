@@ -52,7 +52,7 @@ extern unsigned short white[8] ;     // 存储白色校准值的数组
 extern unsigned short black[8];     // 存储黑色校准值的数组
 extern unsigned short Normal[8];          // 归一化值数组
 extern No_MCU_Sensor sensor;
-float Yaw_Angle=0;
+float current_yaw=0;
 
 
 int main(void)
@@ -108,7 +108,20 @@ int main(void)
         // DL_GPIO_setPins(GPIO_MOTOR_AIN1_PORT, GPIO_MOTOR_AIN1_PIN);
         // DL_GPIO_clearPins(GPIO_MOTOR_AIN2_PORT, GPIO_MOTOR_AIN2_PIN);
         // Control();
-
+        // ===== 2. 使用轮询方式读取 =====
+        // 如果不接 INT 引脚，我们不能一直狂读。每隔 5ms 读一次刚好。
+        static uint32_t last_gyro_tick = 0;
+        if (Tick - last_gyro_tick >= 5)  // 每 5ms 读一次
+        {
+            last_gyro_tick = Tick;
+            Read_Quad(); // 强行去问陀螺仪要数据
+            current_yaw = yaw; // 把最新的航向存下来
+            // 调试打印：看看读到的是不是 0~360 度
+            char tx_buff[50];
+            sprintf(tx_buff, "Yaw: %.2f\r\n", current_yaw);
+            uart0_send_string(tx_buff);
+        }
+        Tick_delay(10);
     }
 }
 
