@@ -84,6 +84,7 @@ unsigned char Digtal;              // 数字输出值
 
 
 PID tracking_pid;
+PID yaw_pid;
 Motor motor_l;
 Motor motor_r;
 
@@ -146,12 +147,12 @@ float Calculate_Position_Error(unsigned char digtal)
 
 
 
-
 void Trace_init(void)
 {
-    // 1. 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
+    // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
     PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 15, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
-    // 2. 给电机初始化目标速度 (初始为0，防止一上电猛冲)
+    PID_Init(&yaw_pid, DELTA, 40.0f, 5.0f, 1.5, 0.0f, 0.0f);
+    // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
     motor_r.speed_set = 0;
     //电机初始化
@@ -166,6 +167,10 @@ void Trace_init(void)
     motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
     motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
 }
+
+
+
+
 
 
 
@@ -192,9 +197,9 @@ void Control(void)
     float error = Calculate_Position_Error(Digtal);
 
         // 3. 必须用固定时间间隔调用，保证速度计算准确 (建议用 Tick 做非阻塞延时)
-        // 每隔 10ms 执行一次循迹
+        // 每隔 50ms 执行一次循迹
         static uint32_t last_loop_tick = 0;
-        if (Tick - last_loop_tick >= 10)
+        if (Tick - last_loop_tick >= 50)
          {
             last_loop_tick = Tick;
             // 从编码器驱动获取delta (GPIO中断累加, 替代TIMA1定时器读数)
@@ -294,9 +299,55 @@ void GROUP1_IRQHandler(void)
 
 
 
+float current_yaw=0;
+
+/**
+ * @brief 计算航向误差（处理 360° 环绕）
+ * @param target  目标航向角 (0~360°)
+ * @param current 当前航向角 (来自 MPU6050 yaw)
+ * @return 误差 (-180~+180), 正值需左转, 负值需右转
+ */
+float Calculate_Heading_Error(float target, float current)
+{
+    float error = target - current;
+    while (error > 180.0f)  error -= 360.0f;
+    while (error < -180.0f) error += 360.0f;
+    return error;
+}
 
 
 
+void Turn_angel(float angel)
+{
+    static float target_heading = -999;  // -999 表示未设置
+    static uint32_t last_gyro_tick = 0;
 
+    /* 只在第一次调用时设定目标 */
+    if (target_heading < -100) {
+        target_heading = yaw + angel;   // 记下目标
+        PID_clear(&yaw_pid);
+    }
 
+    /* 每 5ms 更新 yaw */
+    if (Tick - last_gyro_tick >= 5) {
+        last_gyro_tick = Tick;
+        Read_Quad();
+        current_yaw = yaw;
+    }
+
+    float yaw_error = Calculate_Heading_Error(target_heading, current_yaw);
+
+    /* 到位判断 */
+    if (fabs(yaw_error) < 3.0f) {
+        // 到位，停转
+        motor_l.speed_set = base_target_speed;
+        motor_r.speed_set = base_target_speed;
+        target_heading = -999;   // 重置，下次调用重新设定
+        return;
+    }
+
+    float corr = PID_Calc(&yaw_pid, yaw_error, 0.0f);
+    motor_l.speed_set = base_target_speed + corr;
+    motor_r.speed_set = base_target_speed - corr;
+}
 

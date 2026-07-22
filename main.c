@@ -52,7 +52,7 @@ extern unsigned short white[8] ;     // 存储白色校准值的数组
 extern unsigned short black[8];     // 存储黑色校准值的数组
 extern unsigned short Normal[8];          // 归一化值数组
 extern No_MCU_Sensor sensor;
-float current_yaw=0;
+extern float current_yaw;
 
 
 int main(void)
@@ -116,7 +116,7 @@ int main(void)
             last_gyro_tick = Tick;
             Read_Quad(); // 强行去问陀螺仪要数据
             current_yaw = yaw; // 把最新的航向存下来
-            // 调试打印：看看读到的是不是 0~360 度
+            // 调试打印
             char tx_buff[50];
             sprintf(tx_buff, "Yaw: %.2f\r\n", current_yaw);
             uart0_send_string(tx_buff);
