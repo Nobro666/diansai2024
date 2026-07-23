@@ -41,6 +41,7 @@
 #include "flash.h"
 #include "trace.h"
 #include "pid.h"
+#include "Task.h"
 
 extern Motor motor_l;
 extern Motor motor_r;
@@ -110,18 +111,21 @@ int main(void)
         // Control();
         // ===== 2. 使用轮询方式读取 =====
         // 如果不接 INT 引脚，我们不能一直狂读。每隔 5ms 读一次刚好。
-        static uint32_t last_gyro_tick = 0;
-        if (Tick - last_gyro_tick >= 5)  // 每 5ms 读一次
-        {
-            last_gyro_tick = Tick;
-            Read_Quad(); // 强行去问陀螺仪要数据
-            current_yaw = yaw; // 把最新的航向存下来
-            // 调试打印
-            char tx_buff[50];
-            sprintf(tx_buff, "Yaw: %.2f\r\n", current_yaw);
-            uart0_send_string(tx_buff);
-        }
-        Tick_delay(10);
+
+        // static uint32_t last_gyro_tick = 0;
+        // if (Tick - last_gyro_tick >= 5)  // 每 5ms 读一次
+        // {
+        //     last_gyro_tick = Tick;
+        //     Read_Quad(); // 强行去问陀螺仪要数据
+        //     current_yaw = yaw; // 把最新的航向存下来
+        //     // 调试打印
+        //     char tx_buff[50];
+        //     sprintf(tx_buff, "Yaw: %.2f\r\n", current_yaw);
+        //     uart0_send_string(tx_buff);
+        // }
+        // Tick_delay(10);
+
+        task3();
     }
 }
 

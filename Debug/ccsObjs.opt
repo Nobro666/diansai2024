@@ -19,6 +19,7 @@
 "./Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o"
 "./Motor/motor.o"
 "./User/PID/pid.o"
+"./User/Task/Task.o"
 "./User/trace/trace.o"
 -l"./device_linker.cmd"
 -ldevice.cmd.genlibs

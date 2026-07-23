@@ -14,134 +14,163 @@
 #include "encoder.h"
 
 
-PID yaw_pid;
-//初始化航向pid
-PID_Init(&yaw_pid, DELTA, 40.0f, 5.0f, 1.5, 0.0f, 0.0f);
+extern unsigned char Digtal;
+extern uint8_t drive_mode;
+extern float target_angle;
 
-/**
- * @brief 计算航向误差（处理 360° 环绕）
- * @param target  目标航向角 (0~360°)
- * @param current 当前航向角 (来自 MPU6050 yaw)
- * @return 误差 (-180~+180), 正值需左转, 负值需右转
- */
-float Calculate_Heading_Error(float target, float current)
-{
-    float error = target - current;
-    while (error > 180.0f)  error -= 360.0f;
-    while (error < -180.0f) error += 360.0f;
-    return error;
-}
+//   void task3(void)
+//   {
+//       static bool turning = false;
 
-// void Turn_angel(float angel)
-// {   
-//     static float current_heading = yaw; // 记录初始航向
-//     static uint32_t last_gyro_tick = 0;
-//     if (Tick - last_gyro_tick >= 5)  // 每 5ms 读一次
-//     {
-//         last_gyro_tick = Tick;
-//         Read_Quad(); // 去问陀螺仪要数据
-//         current_yaw = yaw; // 把最新的航向存下来
-//     }
-//     float target_heading = current_heading + angel;//设置目标航向
-//     float yaw_erro = Calculate_Heading_Error(target_heading, current_yaw);
-//     float heading_correction = PID_Calc(&yaw_pid, yaw_error, 0.0f);
-//     float left_target  = base_target_speed + heading_correction;
-//     float right_target = base_target_speed - heading_correction;
-//     if (fabs(yaw_error) < 3.0f) {   // 误差 < 3° 认为到位
-//     left_target = 0;
-//     right_target = 0;
+//       /* 脱线检测 */
+//       if (!turning && Digtal == 0xFF) {
+//           turning      = true;
+//           drive_mode   = 1;
+//           target_angle = 60;
+//       }
+
+//       /* 等 Turn_angel 完成 */
+//       if (turning && drive_mode == 0) {
+//           turning = false;
+//       }
+
+//       Control();
 //   }
-// }
-
-void Turn_angel(float angel)
-{
-    static float target_heading = -999;  // -999 表示未设置
-    static uint32_t last_gyro_tick = 0;
-
-    /* 只在第一次调用时设定目标 */
-    if (target_heading < -100) {
-        target_heading = yaw + angel;   // 记下目标
-        PID_clear(&yaw_pid);
-    }
-
-    /* 每 5ms 更新 yaw */
-    if (Tick - last_gyro_tick >= 5) {
-        last_gyro_tick = Tick;
-        Read_Quad();
-        current_yaw = yaw;
-    }
-
-    float yaw_error = Calculate_Heading_Error(target_heading, current_yaw);
-
-    /* 到位判断 */
-    if (fabs(yaw_error) < 3.0f) {
-        // 到位，停转
-        motor_l.speed_set = base_target_speed;
-        motor_r.speed_set = base_target_speed;
-        target_heading = -999;   // 重置，下次调用重新设定
-        return;
-    }
-
-    float corr = PID_Calc(&yaw_pid, yaw_error, 0.0f);
-    motor_l.speed_set = base_target_speed + corr;
-    motor_r.speed_set = base_target_speed - corr;
-}
 
 
+//     void task3(void)
+//   {
+//       static bool done = false;
+
+//       /* 脱线时触发一次转向 */
+//       if (!done && Digtal == 0xFF) {
+//           drive_mode   = 1;
+//           target_angle = 60;
+//           done         = true;   // 只转一次，之后直走
+//       }
+
+//       Control();
+//   }
 
 
+//       void task3(void)
+//   {
+//       static bool   done    = false;
+//       static bool   turning = false;
+//       static uint32_t start_tick = 0;
+
+//       /* 记录首次调用时刻 */
+//       if (start_tick == 0) start_tick = Tick;
+
+//       /* 上电前 2 秒不管黑白，直走 */
+//       if (Tick - start_tick < 2000) {
+//           Control();
+//           return;
+//       }
+       
+//        Control();
+//       /* 脱线检测 */
+//       if (!turning && !done && Digtal == 0xFF) {
+//           turning      = true;
+//           drive_mode   = 1;
+//           target_angle = 60;
+//       }
+
+//       /* 等 Turn_angel 完成 */
+//       if (turning && drive_mode == 0) {
+//           turning = false;
+//           done    = true;
+//       }
+
+//       Control();
+//   }
 
 
+//  void task3(void)
+//   {
+//       static bool   done       = false;
+//       static bool   turning    = false;
+//       static uint32_t start_tick = 0;
+
+//       if (start_tick == 0) start_tick = Tick;
+
+//       Control();
+
+//       /* 2 秒后才启用脱线检测 */
+//       if (Tick - start_tick >= 2000 && !turning && !done && Digtal == 0xFF) {
+//           turning      = true;
+//           drive_mode   = 1;
+//           target_angle = 60;
+//       }
+
+//       if (turning && drive_mode == 0) {
+//           turning = false;
+//           done    = true;
+//       }
+//   }
 
 
+//   void task3(void)
+//   {
+//       static bool   done        = false;
+//       static bool   turning     = false;
+//       static uint32_t start_tick = 0;
+//       static int    lost_count  = 0;
+
+//       if (start_tick == 0) start_tick = Tick;
+
+//       Control();
+
+//       if (Tick - start_tick >= 2000 && !turning && !done) {
+//           if (Digtal == 0xFF) {
+//               lost_count++;
+//               if (lost_count >= 5) {   // 连续 5 帧全白才判脱线
+//                   turning      = true;
+//                   drive_mode   = 1;
+//                   target_angle = 60;
+//                   lost_count   = 0;
+//               }
+//           } else {
+//               lost_count = 0;   // 看到线就清零
+//           }
+//       }
+
+//       if (turning && drive_mode == 0) {
+//           turning = false;
+//           done    = true;
+//       }
+//   }
 
 
+  void task3(void)
+  {
+      static bool   done       = false;
+      static bool   turning    = false;
+      static int    loop_cnt   = 0;
+      static int    lost_cnt   = 0;
 
+      Control();
+      loop_cnt++;
 
+      /* 上电前 200 轮不触发脱线（约 2 秒） */
+      if (loop_cnt < 200) return;
 
+      if (!turning && !done) {
+          if (Digtal == 0xFF) {
+              lost_cnt++;
+              if (lost_cnt >= 80) {
+                  turning      = true;
+                  drive_mode   = 1;
+                  target_angle = 58;
+                  lost_cnt     = 0;
+              }
+          } else {
+              lost_cnt = 0;
+          }
+      }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-/******************************************************************************
- * 函数名称：task1
- * 功    能：题目1：A->B自动循迹，到B点停车并声光提示
- ******************************************************************************/
-void task1(void)
-{
-    /* 清零编码器 */
-    Encoder_Clear();
-
-    /* 开始循迹 */
-    while(1)
-    {
-        /* 灰度PID循迹 */
-        Track_PID();
-
-        /* 到达B点 */
-        if(Encoder_GetDistance() >= AB_DISTANCE)
-        {
-            break;
-        }
-    }
-
-    /* 停车 */
-    Motor_Stop();
-
-    /* 声光提示 */
-    // LED_On();
-    // Buzzer_On();
-    // Delay_ms(300);
-    // Buzzer_Off();
-    // LED_Off();
-}
+      if (turning && drive_mode == 0) {
+          turning = false;
+          done    = true;
+      }
+  }

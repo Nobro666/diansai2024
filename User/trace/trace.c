@@ -89,6 +89,8 @@ Motor motor_l;
 Motor motor_r;
 
 float base_target_speed = 25;
+uint8_t drive_mode = 0;   // 0=循迹, 1=航向转向
+float target_angle = 0;   // 转向目标角度
 
 void Motor_Ctrl(float err)
 {
@@ -150,8 +152,8 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 15, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
-    PID_Init(&yaw_pid, DELTA, 40.0f, 5.0f, 1.5, 0.0f, 0.0f);
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 22, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&yaw_pid, DELTA, 35.0f, 0.0f, 0.8, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
     motor_r.speed_set = 0;
@@ -164,8 +166,8 @@ void Trace_init(void)
     Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
     Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
     //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
-    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.2, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.2, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
 }
 
 
@@ -197,9 +199,9 @@ void Control(void)
     float error = Calculate_Position_Error(Digtal);
 
         // 3. 必须用固定时间间隔调用，保证速度计算准确 (建议用 Tick 做非阻塞延时)
-        // 每隔 50ms 执行一次循迹
+        // 每隔 10ms 执行一次循迹
         static uint32_t last_loop_tick = 0;
-        if (Tick - last_loop_tick >= 50)
+        if (Tick - last_loop_tick >= 10)
          {
             last_loop_tick = Tick;
             // 从编码器驱动获取delta (GPIO中断累加, 替代TIMA1定时器读数)
@@ -214,14 +216,16 @@ void Control(void)
             // 读取编码器速度反馈 (更新 speed_filter)
             motor_l.SpeedGet(&motor_l);
             motor_r.SpeedGet(&motor_r);
-            // 循迹 → 设 speed_set
-            Motor_Ctrl(error);
+            // 根据模式设置 speed_set
+            if (drive_mode == 0) {
+                Motor_Ctrl(error);                // 循迹
+            } else {
+                Turn_angel(target_angle);         // 航向转向
+            }
 
-            // 第三步：驱动层闭环 (让 PID 速度环生效)
-            // 结合当前的 speed_set (目标) 和 speed_filter (当前实际速度)，算出 PWM 发给电机
+            // PID 闭环 → PWM 输出
             motor_l.Calc(&motor_l);
             motor_r.Calc(&motor_r);
-            // 将PID输出写入PWM硬件
             motor_l.Driver(&motor_l, (int32_t)motor_l.pid.out);
             motor_r.Driver(&motor_r, (int32_t)motor_r.pid.out);
 
@@ -319,33 +323,39 @@ float Calculate_Heading_Error(float target, float current)
 
 void Turn_angel(float angel)
 {
-    static float target_heading = -999;  // -999 表示未设置
-    static uint32_t last_gyro_tick = 0;
+    static float target_heading = -999;
+    static bool  target_set   = false;
 
-    /* 只在第一次调用时设定目标 */
-    if (target_heading < -100) {
-        target_heading = yaw + angel;   // 记下目标
-        PID_clear(&yaw_pid);
-    }
+    /* 首次调用：记录目标航向 */
+  if (!target_set) {
+      Read_Quad();
+      current_yaw = yaw;
+      target_heading = current_yaw + angel;
+      target_set    = true;
+      PID_clear(&yaw_pid);
+  }
 
-    /* 每 5ms 更新 yaw */
-    if (Tick - last_gyro_tick >= 5) {
-        last_gyro_tick = Tick;
+    // /* 每 5ms 读一次陀螺仪 */
+    // static uint32_t last_gyro_tick = 0;
+    // if (Tick - last_gyro_tick >= 5) {
+    //     last_gyro_tick = Tick;
         Read_Quad();
         current_yaw = yaw;
-    }
+    // }
 
     float yaw_error = Calculate_Heading_Error(target_heading, current_yaw);
 
-    /* 到位判断 */
+    /* 到位：转直走，重置目标 */
     if (fabs(yaw_error) < 3.0f) {
-        // 到位，停转
         motor_l.speed_set = base_target_speed;
         motor_r.speed_set = base_target_speed;
-        target_heading = -999;   // 重置，下次调用重新设定
+        target_set = false;
+        target_heading = -999;
+        drive_mode = 0;   // 切回循迹模式
         return;
     }
 
+    /* 边走边转 */
     float corr = PID_Calc(&yaw_pid, yaw_error, 0.0f);
     motor_l.speed_set = base_target_speed + corr;
     motor_r.speed_set = base_target_speed - corr;

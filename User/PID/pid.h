@@ -52,5 +52,6 @@ void PID_Init(PID *pid, PID_Mode mode, float maxout, float max_iout, float kp, f
  */
 // float PID_Calculate(PID *pid, float fdb, float set); 错的
 float PID_Calc(PID *pid, float now, float set);//正确
+void PID_clear(PID *pid);
 
 #endif
