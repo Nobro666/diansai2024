@@ -89,8 +89,10 @@ Motor motor_l;
 Motor motor_r;
 
 float base_target_speed = 25;
-uint8_t drive_mode = 0;   // 0=循迹, 1=航向转向
+#define FindSpeed 18
+uint8_t drive_mode = 0;   // 0=循迹, 1=航向转向, 2=锁定直行, 3=慢速找线
 float target_angle = 0;   // 转向目标角度
+bool  heading_relock = false;  // RunStraight 重新锁定航向
 
 void Motor_Ctrl(float err)
 {
@@ -152,8 +154,8 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 20, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
-    PID_Init(&yaw_pid, DELTA, 35.0f, 0.0f, 0.8, 0.0f, 0.0f);
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 21, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&yaw_pid, DELTA, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
     motor_r.speed_set = 0;
@@ -217,10 +219,11 @@ void Control(void)
             motor_l.SpeedGet(&motor_l);
             motor_r.SpeedGet(&motor_r);
             // 根据模式设置 speed_set
-            if (drive_mode == 0) {
-                Motor_Ctrl(error);                // 循迹
-            } else {
-                Turn_angel(target_angle);         // 航向转向
+            switch (drive_mode) {
+                case 0: Motor_Ctrl(error);        break;  // 循迹
+                case 1: Turn_angel(target_angle); break;  // 航向转向
+                case 2: RunStraight();            break;  // 锁定直行
+                case 3: SlowForward();            break;  // 慢速找线
             }
 
             // PID 闭环 → PWM 输出
@@ -345,36 +348,56 @@ void Turn_angel(float angel)
 
     float yaw_error = Calculate_Heading_Error(target_heading, current_yaw);
 
-    /* 到位：转直走，重置目标 */
-    if (fabs(yaw_error) < 3.0f) {
-        motor_l.speed_set = base_target_speed;
-        motor_r.speed_set = base_target_speed;
-        target_set = false;
-        target_heading = -999;
-        drive_mode = 0;   // 切回循迹模式
-        return;
+    // /* 到位：转直走，重置目标 */
+    // if (fabs(yaw_error) < 3.0f) {
+    //     motor_l.speed_set = base_target_speed;
+    //     motor_r.speed_set = base_target_speed;
+    //     target_set = false;
+    //     target_heading = -999;
+    //     drive_mode = 0;   // 切回循迹模式
+    //     return;
+    // }
+
+    static uint8_t ok_cnt=0;
+    if(fabs(yaw_error)<3)
+    {
+        ok_cnt++;
+        if(ok_cnt>=5)      // 连续50ms满足
+        {
+            ok_cnt=0;
+            motor_l.speed_set = base_target_speed;
+            motor_r.speed_set = base_target_speed;
+            target_set = false;
+            target_heading = -999;
+            drive_mode=0;   // 切回循迹模式
+            return;
+        }
+    }
+    else
+    {
+        ok_cnt=0;
     }
 
-    /* 边走边转 */
-    float corr = PID_Calc(&yaw_pid, yaw_error, 0.0f);
-    motor_l.speed_set = base_target_speed + corr;
-    motor_r.speed_set = base_target_speed - corr;
-}
+        /* 边走边转 */
+        float corr = PID_Calc(&yaw_pid, yaw_error, 0.0f);
+        motor_l.speed_set = base_target_speed + corr;
+        motor_r.speed_set = base_target_speed - corr;
+    }
 
 
 
 
-void RunStraight_PID(void)
+void RunStraight(void)
 {
     static float  target_yaw;
     static bool   first = true;
 
-    /* 首次调用自动锁定当前航向 */
-    if (first) {
+    if (first || heading_relock) {
         Read_Quad();
         target_yaw = yaw;
         PID_clear(&yaw_pid);
-        first = false;
+        first       = false;
+        heading_relock = false;
     }
 
     Read_Quad();
@@ -383,8 +406,11 @@ void RunStraight_PID(void)
 
     motor_l.speed_set = base_target_speed + corr;
     motor_r.speed_set = base_target_speed - corr;
-    motor_l.Calc(&motor_l);
-    motor_r.Calc(&motor_r);
-    motor_l.Driver(&motor_l, (int32_t)motor_l.pid.out);
-    motor_r.Driver(&motor_r, (int32_t)motor_r.pid.out);
+}
+
+
+void SlowForward(void)
+{
+    motor_l.speed_set = FindSpeed;
+    motor_r.speed_set = FindSpeed;
 }

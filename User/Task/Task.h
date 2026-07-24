@@ -5,7 +5,8 @@
 void task3(void);
 void StartTurn(float angle);
 bool TurnFinished(void);
-bool LineLost(void);
+bool LostLine(void);
+bool FindLine(void);
 float GetDistance(void);
 void ResetDistance(void);
 void SlowForward(void);

@@ -18,63 +18,41 @@
 extern unsigned char Digtal;
 extern uint8_t drive_mode;
 extern float target_angle;
+extern bool  heading_relock;
 extern Motor motor_l;
 extern Motor motor_r;
 
-static void StartTurn(float angle)
-{
-    drive_mode = 1;
-    target_angle = angle;
-}
-
-static bool TurnFinished(void)
-{
-    return (drive_mode == 0);
-}
 
 static bool FindLine(void)
 {
     static uint16_t line_cnt = 0;
 
-    if(Digtal != 0xFF)          // 有黑线
-    {
-        if(line_cnt < 80)
-            line_cnt++;
-    }
-    else
-    {
+    if (Digtal != 0xFF) {
+        if (line_cnt < 5) line_cnt++;
+    } else {
         line_cnt = 0;
     }
-
-    if(line_cnt >= 80)
-    {
-        line_cnt = 0;           // 防止重复进入
+    if (line_cnt >= 5) {
+        line_cnt = 0;
         return true;
     }
-
     return false;
 }
+
 
 static bool LostLine(void)
 {
     static uint16_t lost_cnt = 0;
 
-    if(Digtal == 0xFF)          // 全白
-    {
-        if(lost_cnt < 80)
-            lost_cnt++;
-    }
-    else
-    {
+    if (Digtal == 0xFF) {
+        if (lost_cnt < 80) lost_cnt++;
+    } else {
         lost_cnt = 0;
     }
-
-    if(lost_cnt >= 80)
-    {
-        lost_cnt = 0;           // 防止重复进入
+    if (lost_cnt >= 80) {
+        lost_cnt = 0;
         return true;
     }
-
     return false;
 }
 
@@ -82,8 +60,9 @@ static bool LostLine(void)
 static float GetDistance(void)
 {
     return (Encoder_GetDistance_cm(&encL)
-          + Encoder_GetDistance_cm(&encR))*0.5f;
+          + Encoder_GetDistance_cm(&encR)) * 0.5f;
 }
+
 
 static void ResetDistance(void)
 {
@@ -93,50 +72,114 @@ static void ResetDistance(void)
 
 
 
+
 /******************************************************************************
- * @brief  慢速寻找黑线
+ * @brief  task3 — 沿矩形轨迹行驶 A→C→B→D→A
  ******************************************************************************/
-#define FindSpeed 18
+#define AC_ANGLE     39
+#define AC_DISTANCE  120
+#define BD_ANGLE     -30
+#define BD_DISTANCE  120
 
-void SlowForward(void)
+typedef enum
 {
-    motor_l.Driver(&motor_l, (int32_t)FindSpeed);
-    motor_r.Driver(&motor_r, (int32_t)FindSpeed);
+    GO_AC,
+    FIND_RIGHT_ARC,
+    TRACE_CB,
+    GO_BD,
+    FIND_LEFT_ARC,
+    TRACE_DA,
+    FINISH
+} TASK_STATE;
+
+
+void task3(void)
+{
+    static TASK_STATE state = GO_AC;
+
+    switch (state) {
+
+    /*************** A→C: 锁定直行 ***************/
+    case GO_AC:
+        drive_mode     = 2;
+        heading_relock = (GetDistance() == 0);   // 第一帧锁航向
+        Control();
+        if (GetDistance() > AC_DISTANCE) 
+        state = FIND_RIGHT_ARC;
+        break;
+
+    /*************** 找右半圆(慢速前进等线) ***************/
+    case FIND_RIGHT_ARC:
+        drive_mode = 3;
+        Control();
+        if (FindLine()) {
+            ResetDistance();
+            drive_mode = 0;
+            Control();
+            state = TRACE_CB;
+        }
+        break;
+
+    /*************** C→B: 循迹 + 脱线转 BD_ANGLE ***************/
+    case TRACE_CB: {
+        static bool turning = false;
+
+        if (!turning) 
+        drive_mode = 0;
+        Control();
+
+        if (!turning && LostLine()) {
+            ResetDistance();
+            drive_mode   = 1;
+            target_angle = BD_ANGLE;
+            turning      = true;
+        }
+        if (turning && drive_mode == 0) {   // Turn_angel 到位
+            turning = false;
+            state   = GO_BD;
+        }
+        break;
+    }
+
+    /*************** B→D: 锁定直行 ***************/
+    case GO_BD: {
+        static bool first_frame = true;
+
+        drive_mode     = 2;
+        heading_relock = first_frame;
+        first_frame    = false;
+        Control();
+        if (GetDistance() > BD_DISTANCE) {
+            first_frame = true;
+            state = FIND_LEFT_ARC;
+        }
+        break;
+    }
+
+    /*************** 找左半圆(慢速前进等线) ***************/
+    case FIND_LEFT_ARC:
+        drive_mode = 3;
+        Control();
+        if (FindLine()) {
+            ResetDistance();
+            drive_mode = 0;
+            Control();
+            state = TRACE_DA;
+        }
+        break;
+
+    /*************** D→A: 循迹 + 脱线停车 ***************/
+    case TRACE_DA:
+        drive_mode = 0;
+        Control();
+        if (LostLine()) {
+            motor_l.Driver(&motor_l, 0);
+            motor_r.Driver(&motor_r, 0);
+            state = FINISH;
+        }
+        break;
+
+    case FINISH:
+        break;
+    }
 }
-
-
-
-
-
-  void task3(void)
-  {
-      static bool   done       = false;
-      static bool   turning    = false;
-      static int    loop_cnt   = 0;
-      static int    lost_cnt   = 0;
-
-      Control();
-      loop_cnt++;
-
-      /* 上电前 200 轮不触发脱线（约 2 秒） */
-      if (loop_cnt < 200) return;
-
-      if (!turning && !done) {
-          if (Digtal == 0xFF) {
-              lost_cnt++;
-              if (lost_cnt >= 80) {
-                  turning      = true;
-                  drive_mode   = 1;
-                  target_angle = 60;
-                  lost_cnt     = 0;
-              }
-          } else {
-              lost_cnt = 0;
-          }
-      }
-
-      if (turning && drive_mode == 0) {
-          turning = false;
-          done    = true;
-      }
-  }
