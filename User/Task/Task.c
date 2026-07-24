@@ -12,134 +12,100 @@
 #include "motor.h"
 #include "pid.h"
 #include "encoder.h"
+#include "Distance.h"
 
 
 extern unsigned char Digtal;
 extern uint8_t drive_mode;
 extern float target_angle;
+extern Motor motor_l;
+extern Motor motor_r;
 
-//   void task3(void)
-//   {
-//       static bool turning = false;
+static void StartTurn(float angle)
+{
+    drive_mode = 1;
+    target_angle = angle;
+}
 
-//       /* 脱线检测 */
-//       if (!turning && Digtal == 0xFF) {
-//           turning      = true;
-//           drive_mode   = 1;
-//           target_angle = 60;
-//       }
+static bool TurnFinished(void)
+{
+    return (drive_mode == 0);
+}
 
-//       /* 等 Turn_angel 完成 */
-//       if (turning && drive_mode == 0) {
-//           turning = false;
-//       }
+static bool FindLine(void)
+{
+    static uint16_t line_cnt = 0;
 
-//       Control();
-//   }
+    if(Digtal != 0xFF)          // 有黑线
+    {
+        if(line_cnt < 80)
+            line_cnt++;
+    }
+    else
+    {
+        line_cnt = 0;
+    }
 
+    if(line_cnt >= 80)
+    {
+        line_cnt = 0;           // 防止重复进入
+        return true;
+    }
 
-//     void task3(void)
-//   {
-//       static bool done = false;
+    return false;
+}
 
-//       /* 脱线时触发一次转向 */
-//       if (!done && Digtal == 0xFF) {
-//           drive_mode   = 1;
-//           target_angle = 60;
-//           done         = true;   // 只转一次，之后直走
-//       }
+static bool LostLine(void)
+{
+    static uint16_t lost_cnt = 0;
 
-//       Control();
-//   }
+    if(Digtal == 0xFF)          // 全白
+    {
+        if(lost_cnt < 80)
+            lost_cnt++;
+    }
+    else
+    {
+        lost_cnt = 0;
+    }
 
+    if(lost_cnt >= 80)
+    {
+        lost_cnt = 0;           // 防止重复进入
+        return true;
+    }
 
-//       void task3(void)
-//   {
-//       static bool   done    = false;
-//       static bool   turning = false;
-//       static uint32_t start_tick = 0;
-
-//       /* 记录首次调用时刻 */
-//       if (start_tick == 0) start_tick = Tick;
-
-//       /* 上电前 2 秒不管黑白，直走 */
-//       if (Tick - start_tick < 2000) {
-//           Control();
-//           return;
-//       }
-       
-//        Control();
-//       /* 脱线检测 */
-//       if (!turning && !done && Digtal == 0xFF) {
-//           turning      = true;
-//           drive_mode   = 1;
-//           target_angle = 60;
-//       }
-
-//       /* 等 Turn_angel 完成 */
-//       if (turning && drive_mode == 0) {
-//           turning = false;
-//           done    = true;
-//       }
-
-//       Control();
-//   }
+    return false;
+}
 
 
-//  void task3(void)
-//   {
-//       static bool   done       = false;
-//       static bool   turning    = false;
-//       static uint32_t start_tick = 0;
+static float GetDistance(void)
+{
+    return (Encoder_GetDistance_cm(&encL)
+          + Encoder_GetDistance_cm(&encR))*0.5f;
+}
 
-//       if (start_tick == 0) start_tick = Tick;
-
-//       Control();
-
-//       /* 2 秒后才启用脱线检测 */
-//       if (Tick - start_tick >= 2000 && !turning && !done && Digtal == 0xFF) {
-//           turning      = true;
-//           drive_mode   = 1;
-//           target_angle = 60;
-//       }
-
-//       if (turning && drive_mode == 0) {
-//           turning = false;
-//           done    = true;
-//       }
-//   }
+static void ResetDistance(void)
+{
+    Encoder_ResetDistance(&encL);
+    Encoder_ResetDistance(&encR);
+}
 
 
-//   void task3(void)
-//   {
-//       static bool   done        = false;
-//       static bool   turning     = false;
-//       static uint32_t start_tick = 0;
-//       static int    lost_count  = 0;
 
-//       if (start_tick == 0) start_tick = Tick;
+/******************************************************************************
+ * @brief  慢速寻找黑线
+ ******************************************************************************/
+#define FindSpeed 18
 
-//       Control();
+void SlowForward(void)
+{
+    motor_l.Driver(&motor_l, (int32_t)FindSpeed);
+    motor_r.Driver(&motor_r, (int32_t)FindSpeed);
+}
 
-//       if (Tick - start_tick >= 2000 && !turning && !done) {
-//           if (Digtal == 0xFF) {
-//               lost_count++;
-//               if (lost_count >= 5) {   // 连续 5 帧全白才判脱线
-//                   turning      = true;
-//                   drive_mode   = 1;
-//                   target_angle = 60;
-//                   lost_count   = 0;
-//               }
-//           } else {
-//               lost_count = 0;   // 看到线就清零
-//           }
-//       }
 
-//       if (turning && drive_mode == 0) {
-//           turning = false;
-//           done    = true;
-//       }
-//   }
+
 
 
   void task3(void)
@@ -161,7 +127,7 @@ extern float target_angle;
               if (lost_cnt >= 80) {
                   turning      = true;
                   drive_mode   = 1;
-                  target_angle = 58;
+                  target_angle = 60;
                   lost_cnt     = 0;
               }
           } else {

@@ -124,6 +124,7 @@ Drivers/MPU6050 \
 Drivers/MSPM0 \
 Drivers/OLED_Hardware_I2C \
 Motor \
+User/Distance \
 User/PID \
 User/Task \
 User/trace \

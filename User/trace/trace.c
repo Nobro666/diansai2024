@@ -152,7 +152,7 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 22, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 20, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
     PID_Init(&yaw_pid, DELTA, 35.0f, 0.0f, 0.8, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
@@ -361,3 +361,30 @@ void Turn_angel(float angel)
     motor_r.speed_set = base_target_speed - corr;
 }
 
+
+
+
+void RunStraight_PID(void)
+{
+    static float  target_yaw;
+    static bool   first = true;
+
+    /* 首次调用自动锁定当前航向 */
+    if (first) {
+        Read_Quad();
+        target_yaw = yaw;
+        PID_clear(&yaw_pid);
+        first = false;
+    }
+
+    Read_Quad();
+    float err  = Calculate_Heading_Error(target_yaw, yaw);
+    float corr = PID_Calc(&yaw_pid, err, 0.0f);
+
+    motor_l.speed_set = base_target_speed + corr;
+    motor_r.speed_set = base_target_speed - corr;
+    motor_l.Calc(&motor_l);
+    motor_r.Calc(&motor_r);
+    motor_l.Driver(&motor_l, (int32_t)motor_l.pid.out);
+    motor_r.Driver(&motor_r, (int32_t)motor_r.pid.out);
+}

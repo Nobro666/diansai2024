@@ -18,6 +18,7 @@
 "./Drivers/MSPM0/interrupt.o"
 "./Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o"
 "./Motor/motor.o"
+"./User/Distance/Distance.o"
 "./User/PID/pid.o"
 "./User/Task/Task.o"
 "./User/trace/trace.o"

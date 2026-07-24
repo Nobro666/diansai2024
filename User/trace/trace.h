@@ -8,4 +8,5 @@ void Motor_Ctrl(float err);
 void Turn_angel(float angel);
 float Calculate_Position_Error(unsigned char digtal);
 float Calculate_Heading_Error(float target, float current);
+void RunStraight_PID(void);
 #endif

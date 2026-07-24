@@ -45,6 +45,7 @@
                                     <listOptionValue value="${PROJECT_ROOT}/User/PID"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/trace"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/Task"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/User/Distance"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User"/>
                                     <listOptionValue value="${PROJECT_ROOT}"/>
                                     <listOptionValue value="${PROJECT_ROOT}/${ConfigName}"/>
