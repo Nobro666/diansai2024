@@ -111,13 +111,14 @@ void Trace_Stop(void) {
 /******************************************************************************
  * @brief  task3 — 沿矩形轨迹行驶 A→C→B→D→A
  ******************************************************************************/
-#define AC_ANGLE     39
+#define AC_ANGLE     -39
 #define AC_DISTANCE  120
-#define BD_ANGLE     39
+#define BD_ANGLE     50
 #define BD_DISTANCE  120
 
 typedef enum
 {
+    TURN_START,
     GO_AC,
     FIND_RIGHT_ARC,
     TRACE_CB,
@@ -130,9 +131,18 @@ typedef enum
 
 void task3(void)
 {
-    static TASK_STATE state = GO_AC;
+    static TASK_STATE state = TURN_START;
 
     switch (state) {
+
+    /*************** 初始原地转向 ***************/
+    case TURN_START:
+        Trace_TurnTo(AC_ANGLE);
+        if (Trace_TurnDone()) {
+            ResetDistance();
+            state = GO_AC;
+        }
+        break;
 
     /*************** A→C: 锁定直行 ***************/
     case GO_AC:
