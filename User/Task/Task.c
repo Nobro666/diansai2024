@@ -71,6 +71,41 @@ static void ResetDistance(void)
 }
 
 
+/* ==================== 状态机辅助函数 ==================== */
+
+void Trace_Follow(void) {
+    drive_mode = 0;
+    Control();
+}
+
+void Trace_GoStraight(bool relock) {
+    drive_mode     = 2;
+    heading_relock = relock;
+    Control();
+}
+
+void Trace_TurnTo(float angle) {
+    drive_mode   = 1;
+    target_angle = angle;
+    Control();
+}
+
+void Trace_Search(void) {
+    drive_mode = 3;
+    Control();
+}
+
+bool Trace_TurnDone(void) {
+    return (drive_mode == 0);
+}
+
+void Trace_Stop(void) {
+    motor_l.Driver(&motor_l, 0);
+    motor_r.Driver(&motor_r, 0);
+}
+
+
+
 
 
 /******************************************************************************
@@ -78,7 +113,7 @@ static void ResetDistance(void)
  ******************************************************************************/
 #define AC_ANGLE     39
 #define AC_DISTANCE  120
-#define BD_ANGLE     -30
+#define BD_ANGLE     39
 #define BD_DISTANCE  120
 
 typedef enum
@@ -101,22 +136,18 @@ void task3(void)
 
     /*************** A→C: 锁定直行 ***************/
     case GO_AC:
-        drive_mode     = 2;
-        heading_relock = (GetDistance() == 0);   // 第一帧锁航向
-        Control();
+        Trace_GoStraight(GetDistance() == 0);
         if (GetDistance() > AC_DISTANCE) 
         state = FIND_RIGHT_ARC;
         break;
 
     /*************** 找右半圆(慢速前进等线) ***************/
     case FIND_RIGHT_ARC:
-        drive_mode = 3;
-        Control();
-        if (FindLine()) {
-            ResetDistance();
-            drive_mode = 0;
-            Control();
-            state = TRACE_CB;
+        Trace_Search();
+        if (FindLine()) 
+        { 
+            ResetDistance(); 
+            state = TRACE_CB; 
         }
         break;
 
@@ -125,57 +156,48 @@ void task3(void)
         static bool turning = false;
 
         if (!turning) 
-        drive_mode = 0;
-        Control();
-
-        if (!turning && LostLine()) {
-            ResetDistance();
-            drive_mode   = 1;
-            target_angle = BD_ANGLE;
-            turning      = true;
-        }
-        if (turning && drive_mode == 0) {   // Turn_angel 到位
-            turning = false;
-            state   = GO_BD;
+        {
+            Trace_Follow();
+            if (LostLine()) 
+            { 
+                ResetDistance(); turning = true; 
+            }
+        } 
+        else 
+        {
+            Trace_TurnTo(BD_ANGLE);
+            if (Trace_TurnDone())
+            { 
+                turning = false; state = GO_BD; 
+            }
         }
         break;
     }
 
     /*************** B→D: 锁定直行 ***************/
-    case GO_BD: {
-        static bool first_frame = true;
-
-        drive_mode     = 2;
-        heading_relock = first_frame;
-        first_frame    = false;
-        Control();
-        if (GetDistance() > BD_DISTANCE) {
-            first_frame = true;
-            state = FIND_LEFT_ARC;
-        }
+    case GO_BD:
+        Trace_GoStraight(true);
+        if (GetDistance() > BD_DISTANCE) 
+        state = FIND_LEFT_ARC;
         break;
-    }
 
     /*************** 找左半圆(慢速前进等线) ***************/
     case FIND_LEFT_ARC:
-        drive_mode = 3;
-        Control();
-        if (FindLine()) {
-            ResetDistance();
-            drive_mode = 0;
-            Control();
-            state = TRACE_DA;
+        Trace_Search();
+        if (FindLine()) 
+        { 
+            ResetDistance(); 
+            state = TRACE_DA; 
         }
         break;
 
     /*************** D→A: 循迹 + 脱线停车 ***************/
     case TRACE_DA:
-        drive_mode = 0;
-        Control();
-        if (LostLine()) {
-            motor_l.Driver(&motor_l, 0);
-            motor_r.Driver(&motor_r, 0);
-            state = FINISH;
+        Trace_Follow();
+        if (LostLine()) 
+        { 
+            Trace_Stop(); 
+            state = FINISH; 
         }
         break;
 

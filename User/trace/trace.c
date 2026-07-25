@@ -154,8 +154,8 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 21, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
-    PID_Init(&yaw_pid, DELTA, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 20, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&yaw_pid, POSITION, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
     motor_r.speed_set = 0;
@@ -168,8 +168,8 @@ void Trace_init(void)
     Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
     Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
     //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.2, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
-    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.2, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
 }
 
 
@@ -414,3 +414,5 @@ void SlowForward(void)
     motor_l.speed_set = FindSpeed;
     motor_r.speed_set = FindSpeed;
 }
+
+
