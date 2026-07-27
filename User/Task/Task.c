@@ -13,6 +13,7 @@
 #include "pid.h"
 #include "encoder.h"
 #include "Distance.h"
+#include "BUZZER.h"
 
 
 extern unsigned char Digtal;
@@ -28,11 +29,11 @@ static bool FindLine(void)
     static uint16_t line_cnt = 0;
 
     if (Digtal != 0xFF) {
-        if (line_cnt < 5) line_cnt++;
+        if (line_cnt < 2) line_cnt++;
     } else {
         line_cnt = 0;
     }
-    if (line_cnt >= 5) {
+    if (line_cnt >= 2) {
         line_cnt = 0;
         return true;
     }
