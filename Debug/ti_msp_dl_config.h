@@ -151,22 +151,6 @@ extern "C" {
 #define UART_0_BAUD_RATE                                                (115200)
 #define UART_0_IBRD_32_MHZ_115200_BAUD                                      (17)
 #define UART_0_FBRD_32_MHZ_115200_BAUD                                      (23)
-/* Defines for UART_1 */
-#define UART_1_INST                                                        UART1
-#define UART_1_INST_FREQUENCY                                           32000000
-#define UART_1_INST_IRQHandler                                  UART1_IRQHandler
-#define UART_1_INST_INT_IRQN                                      UART1_INT_IRQn
-#define GPIO_UART_1_RX_PORT                                                GPIOA
-#define GPIO_UART_1_TX_PORT                                                GPIOA
-#define GPIO_UART_1_RX_PIN                                        DL_GPIO_PIN_18
-#define GPIO_UART_1_TX_PIN                                        DL_GPIO_PIN_17
-#define GPIO_UART_1_IOMUX_RX                                     (IOMUX_PINCM40)
-#define GPIO_UART_1_IOMUX_TX                                     (IOMUX_PINCM39)
-#define GPIO_UART_1_IOMUX_RX_FUNC                      IOMUX_PINCM40_PF_UART1_RX
-#define GPIO_UART_1_IOMUX_TX_FUNC                      IOMUX_PINCM39_PF_UART1_TX
-#define UART_1_BAUD_RATE                                                  (9600)
-#define UART_1_IBRD_32_MHZ_9600_BAUD                                       (208)
-#define UART_1_FBRD_32_MHZ_9600_BAUD                                        (21)
 
 
 
@@ -208,12 +192,18 @@ extern "C" {
 #define GRAY_IN_IN_KEY_IIDX                                 (DL_GPIO_IIDX_DIO14)
 #define GRAY_IN_IN_KEY_PIN                                      (DL_GPIO_PIN_14)
 #define GRAY_IN_IN_KEY_IOMUX                                     (IOMUX_PINCM36)
-/* Port definition for Pin Group BUFFER */
-#define BUFFER_PORT                                                      (GPIOB)
+/* Port definition for Pin Group BUZZER */
+#define BUZZER_PORT                                                      (GPIOA)
 
-/* Defines for PIN_0: GPIOB.7 with pinCMx 24 on package pin 59 */
-#define BUFFER_PIN_0_PIN                                         (DL_GPIO_PIN_7)
-#define BUFFER_PIN_0_IOMUX                                       (IOMUX_PINCM24)
+/* Defines for PIN_BUZZER: GPIOA.2 with pinCMx 7 on package pin 42 */
+#define BUZZER_PIN_BUZZER_PIN                                    (DL_GPIO_PIN_2)
+#define BUZZER_PIN_BUZZER_IOMUX                                   (IOMUX_PINCM7)
+/* Port definition for Pin Group ELECTRO */
+#define ELECTRO_PORT                                                     (GPIOA)
+
+/* Defines for PIN_ELECTRO: GPIOA.17 with pinCMx 39 on package pin 10 */
+#define ELECTRO_PIN_ELECTRO_PIN                                 (DL_GPIO_PIN_17)
+#define ELECTRO_PIN_ELECTRO_IOMUX                                (IOMUX_PINCM39)
 /* Defines for BIN2: GPIOB.8 with pinCMx 25 on package pin 60 */
 #define GPIO_MOTOR_BIN2_PORT                                             (GPIOB)
 #define GPIO_MOTOR_BIN2_PIN                                      (DL_GPIO_PIN_8)
@@ -285,7 +275,6 @@ void SYSCFG_DL_TIMER_Encoder_init(void);
 void SYSCFG_DL_I2C_OLED_init(void);
 void SYSCFG_DL_I2C_MPU6050_init(void);
 void SYSCFG_DL_UART_0_init(void);
-void SYSCFG_DL_UART_1_init(void);
 void SYSCFG_DL_ADC_VOLTAGE_init(void);
 void SYSCFG_DL_DMA_init(void);
 

@@ -155,7 +155,8 @@ void task3(void)
     case FIND_RIGHT_ARC:
         Trace_Search();
         if (FindLine()) 
-        { 
+        {   
+            ALARM();
             ResetDistance(); 
             state = TRACE_CB; 
         }
@@ -169,7 +170,8 @@ void task3(void)
         {
             Trace_Follow();
             if (LostLine()) 
-            { 
+            {   
+                ALARM();
                 ResetDistance(); turning = true; 
             }
         } 
@@ -195,7 +197,8 @@ void task3(void)
     case FIND_LEFT_ARC:
         Trace_Search();
         if (FindLine()) 
-        { 
+        {   
+            ALARM();
             ResetDistance(); 
             state = TRACE_DA; 
         }
@@ -205,7 +208,8 @@ void task3(void)
     case TRACE_DA:
         Trace_Follow();
         if (LostLine()) 
-        { 
+        {   
+            ALARM();
             Trace_Stop(); 
             state = FINISH; 
         }
