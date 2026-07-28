@@ -14,5 +14,6 @@
   void Encoder_ResetDistance(EncoderUnit *enc)
   {
       enc->count = 0;
+      enc->lastCount = 0;
   }
 

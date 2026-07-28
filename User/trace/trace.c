@@ -89,7 +89,7 @@ Motor motor_l;
 Motor motor_r;
 
 float base_target_speed = 25;
-#define FindSpeed 18
+#define FindSpeed 16
 uint8_t drive_mode = 0;   // 0=循迹, 1=航向转向, 2=锁定直行, 3=慢速找线
 float target_angle = 0;   // 转向目标角度
 bool  heading_relock = false;  // RunStraight 重新锁定航向
@@ -154,7 +154,7 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 19, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 20, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
     PID_Init(&yaw_pid, POSITION, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;

@@ -22,6 +22,7 @@ extern float target_angle;
 extern bool  heading_relock;
 extern Motor motor_l;
 extern Motor motor_r;
+extern PID tracking_pid;
 
 
 static bool FindLine(void)
@@ -113,9 +114,9 @@ void Trace_Stop(void) {
  * @brief  task3 — 沿矩形轨迹行驶 A→C→B→D→A
  ******************************************************************************/
 #define AC_ANGLE     -39
-#define AC_DISTANCE  120
-#define BD_ANGLE     50
-#define BD_DISTANCE  120
+#define AC_DISTANCE  125
+#define BD_ANGLE     47
+#define BD_DISTANCE  130
 
 typedef enum
 {
@@ -195,15 +196,49 @@ void task3(void)
         break;
 
     /*************** 找左半圆(慢速前进等线) ***************/
-    case FIND_LEFT_ARC:
-        Trace_Search();
-        if (FindLine()) 
-        {   
-            ALARM();
-            ResetDistance(); 
-            state = TRACE_DA; 
-        }
-        break;
+    // case FIND_LEFT_ARC:
+        // Trace_Search();
+        // if (FindLine()) 
+        // {   
+        //     // PID_clear(&tracking_pid); 
+        //     ALARM();
+        //     ResetDistance(); 
+        //     Trace_TurnTo(-45);
+        //     if (Trace_TurnDone())
+        //     { 
+        //         Trace_Follow();
+        //         state = TRACE_DA; 
+        //     }
+            
+        //     // Trace_Search();
+        //     // if (GetDistance() > 30)
+        //     // state = TRACE_DA; 
+        // }
+        // break;
+    case FIND_LEFT_ARC: {
+      static bool found   = false;
+      static bool turning = false;
+
+      if (!found) {
+          Trace_Search();
+          if (FindLine()) {
+              ALARM();
+              ResetDistance();
+              found   = true;
+              turning = true;
+          }
+      } else if (turning) {
+          Trace_TurnTo(-45);
+          if (Trace_TurnDone()) {
+              turning = false;
+              state = TRACE_DA;
+          }
+      }
+      break;
+  }
+
+
+
 
     /*************** D→A: 循迹 + 脱线停车 ***************/
     case TRACE_DA:
