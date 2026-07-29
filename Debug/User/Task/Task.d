@@ -101,7 +101,8 @@ User/Task/Task.o: ../User/Task/Task.c \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MPU6050/mpu6050.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Driver/encoder.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/User/Distance/Distance.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/BUZZER/BUZZER.h
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/BUZZER/BUZZER.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/balance/balance.h
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h:
@@ -203,3 +204,4 @@ C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MPU6050/mpu6050.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/encoder.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/User/Distance/Distance.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/User/BUZZER/BUZZER.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/balance/balance.h:

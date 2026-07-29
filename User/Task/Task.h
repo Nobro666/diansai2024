@@ -18,5 +18,6 @@ bool Trace_TurnDone(void);
 void Trace_Stop(void);
 bool StopLineDetect(void);
 void task1(void);
+float StrToFloat(const char *s);
 
 #endif

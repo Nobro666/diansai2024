@@ -162,37 +162,60 @@ void task1(void)
 }
 
 
-/* K230 视觉模块 UART 接收 */
-static char   k230_buf[32];
-static uint8_t k230_idx = 0;
-void UART_k230_INST_IRQHandler(void)
-{
-    switch (DL_UART_Main_getPendingInterrupt(UART_k230_INST)) {
-        case DL_UART_MAIN_IIDX_RX:
-            // DL_GPIO_togglePins(GPIO_LEDS_PORT,
-            //     GPIO_LEDS_USER_LED_1_PIN | GPIO_LEDS_USER_TEST_PIN);
-            // gEchoData = DL_UART_Main_receiveData(UART_k230_INST);
-            // DL_UART_Main_transmitData(UART_k230_INST, gEchoData);
-            break;
-        default:
-            break;
-    }
-}
+// /* K230 视觉模块 UART 接收 */
+// static char   k230_buf[32];
+// static uint8_t k230_idx = 0;
+// void UART_k230_INST_IRQHandler(void)
+// {
+//     switch (DL_UART_Main_getPendingInterrupt(UART_k230_INST)) {
+//         case DL_UART_MAIN_IIDX_RX:
+//             // DL_GPIO_togglePins(GPIO_LEDS_PORT,
+//             //     GPIO_LEDS_USER_LED_1_PIN | GPIO_LEDS_USER_TEST_PIN);
+//             // gEchoData = DL_UART_Main_receiveData(UART_k230_INST);
+//             // DL_UART_Main_transmitData(UART_k230_INST, gEchoData);
+//             break;
+//         default:
+//             break;
+//     }
+// }
 
 #include "balance.h"
 #include <stdbool.h>
 
+
+
+/* 简易字符串转浮点, 避免 sprintf 依赖 */
+float StrToFloat(const char *s)
+{
+    int sign = 1, integer = 0, decimal = 0, div = 1;
+    if (*s == '-') { sign = -1; s++; }
+    else if (*s == '+') { s++; }
+    while (*s >= '0' && *s <= '9') { integer = integer * 10 + (*s++ - '0'); }
+    if (*s == '.') {
+        s++;
+        while (*s >= '0' && *s <= '9') {
+            decimal = decimal * 10 + (*s++ - '0');
+            div    *= 10;
+        }
+    }
+    return sign * ((float)integer + (float)decimal / (float)div);
+}
+
+
+
 /* K230 视觉模块 UART 接收缓冲区 */
 static char    rx_buf[16];
 static uint8_t rx_idx  = 0;
-static bool    rx_done = false;
-static float   rx_ball = 0.0f;
+bool    rx_done = false;
+float   rx_ball = 0.0f;
 
 void UART_k230_INST_IRQHandler(void)
 {
     switch (DL_UART_Main_getPendingInterrupt(UART_k230_INST)) {
         case DL_UART_MAIN_IIDX_RX: {
             char c = (char)DL_UART_Main_receiveData(UART_k230_INST);
+            char tx_buff[50];
+            sprintf(tx_buff,"OK");
             if (c == '\n' || c == '\r') {
                 if (rx_idx > 0) {
                     rx_buf[rx_idx] = '\0';
@@ -211,22 +234,7 @@ void UART_k230_INST_IRQHandler(void)
     }
 }
 
-/* 简易字符串转浮点, 避免 sprintf 依赖 */
-static float StrToFloat(const char *s)
-{
-    int sign = 1, integer = 0, decimal = 0, div = 1;
-    if (*s == '-') { sign = -1; s++; }
-    else if (*s == '+') { s++; }
-    while (*s >= '0' && *s <= '9') { integer = integer * 10 + (*s++ - '0'); }
-    if (*s == '.') {
-        s++;
-        while (*s >= '0' && *s <= '9') {
-            decimal = decimal * 10 + (*s++ - '0');
-            div    *= 10;
-        }
-    }
-    return sign * ((float)integer + (float)decimal / (float)div);
-}
+
 
 /* 主循环轮询 */
 bool BalUART_NewData(void) { return rx_done; }

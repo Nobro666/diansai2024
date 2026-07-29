@@ -43,6 +43,7 @@
 #include "pid.h"
 #include "Task.h"
 #include "oled_software_i2c.h"
+#include "balance.h"
 
 extern Motor motor_l;
 extern Motor motor_r;
@@ -55,6 +56,8 @@ extern unsigned short black[8];     // 存储黑色校准值的数组
 extern unsigned short Normal[8];          // 归一化值数组
 extern No_MCU_Sensor sensor;
 extern float current_yaw;
+extern bool    rx_done;
+extern float   rx_ball;
 
 uint8_t oled_buffer[32];
 void OLED_ShowTimer(void);
@@ -73,6 +76,7 @@ int main(void)
     LED_init();
    
     SYSCFG_DL_UART_k230_init();
+    NVIC_EnableIRQ(UART_k230_INST_INT_IRQN); 
     uart0_send_string("Start System OK\r\n");
     /* DMA配置 - 用于ADC数据传输 */
     // 设置DMA源地址(ADC存储器)
@@ -144,7 +148,13 @@ int main(void)
         //     uart0_send_string(tx_buff);
         // }
         // // Tick_delay(10);
-
+        // if (rx_done)
+        // {
+        //     Balance_FeedBallPos(rx_ball);   // 主循环处理, 不在 ISR 里
+        //     rx_done = false;
+        // }
+        // Balance_Control();
+        // Control();
         task1();
 
         // DL_TimerG_setCaptureCompareValue(PWM_Servo_INST, 1500, DL_TIMER_CC_0_INDEX);
