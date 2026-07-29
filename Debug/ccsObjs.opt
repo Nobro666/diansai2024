@@ -22,6 +22,7 @@
 "./User/Distance/Distance.o"
 "./User/PID/pid.o"
 "./User/Task/Task.o"
+"./User/balance/balance.o"
 "./User/trace/trace.o"
 -l"./device_linker.cmd"
 -ldevice.cmd.genlibs

@@ -128,5 +128,6 @@ User/BUZZER \
 User/Distance \
 User/PID \
 User/Task \
+User/balance \
 User/trace \
 

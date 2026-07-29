@@ -47,6 +47,7 @@
                                     <listOptionValue value="${PROJECT_ROOT}/User/Task"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/Distance"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/BUZZER"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/User/balance"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User"/>
                                     <listOptionValue value="${PROJECT_ROOT}"/>
                                     <listOptionValue value="${PROJECT_ROOT}/${ConfigName}"/>

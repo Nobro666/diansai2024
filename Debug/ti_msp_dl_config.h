@@ -95,6 +95,18 @@ extern "C" {
 #define GPIO_PWM_MOTOR_C1_IOMUX_FUNC                 IOMUX_PINCM20_PF_TIMA0_CCP1
 #define GPIO_PWM_MOTOR_C1_IDX                                DL_TIMER_CC_1_INDEX
 
+/* Defines for PWM_Servo */
+#define PWM_Servo_INST                                                     TIMG0
+#define PWM_Servo_INST_IRQHandler                               TIMG0_IRQHandler
+#define PWM_Servo_INST_INT_IRQN                                 (TIMG0_INT_IRQn)
+#define PWM_Servo_INST_CLK_FREQ                                          1000000
+/* GPIO defines for channel 0 */
+#define GPIO_PWM_Servo_C0_PORT                                             GPIOA
+#define GPIO_PWM_Servo_C0_PIN                                     DL_GPIO_PIN_12
+#define GPIO_PWM_Servo_C0_IOMUX                                  (IOMUX_PINCM34)
+#define GPIO_PWM_Servo_C0_IOMUX_FUNC                 IOMUX_PINCM34_PF_TIMG0_CCP0
+#define GPIO_PWM_Servo_C0_IDX                                DL_TIMER_CC_0_INDEX
+
 
 
 /* Defines for TIMER_Encoder */
@@ -271,6 +283,7 @@ void SYSCFG_DL_initPower(void);
 void SYSCFG_DL_GPIO_init(void);
 void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
+void SYSCFG_DL_PWM_Servo_init(void);
 void SYSCFG_DL_TIMER_Encoder_init(void);
 void SYSCFG_DL_I2C_OLED_init(void);
 void SYSCFG_DL_I2C_MPU6050_init(void);

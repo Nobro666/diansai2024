@@ -25,6 +25,7 @@ const I2C1    = I2C.addInstance();
 const I2C2    = I2C.addInstance();
 const PWM     = scripting.addModule("/ti/driverlib/PWM", {}, false);
 const PWM1    = PWM.addInstance();
+const PWM2    = PWM.addInstance();
 const SYSCTL  = scripting.addModule("/ti/driverlib/SYSCTL");
 const SYSTICK = scripting.addModule("/ti/driverlib/SYSTICK");
 const TIMER   = scripting.addModule("/ti/driverlib/TIMER", {}, false);
@@ -179,6 +180,18 @@ PWM1.ccp1PinConfig.onlyInternalResistor = scripting.forceWrite(false);
 PWM1.ccp1PinConfig.passedPeripheralType = scripting.forceWrite("Digital");
 PWM1.ccp1PinConfig.$name                = "ti_driverlib_gpio_GPIOPinGeneric1";
 
+PWM2.$name                      = "PWM_Servo";
+PWM2.ccIndex                    = [0];
+PWM2.clockPrescale              = 32;
+PWM2.timerStartTimer            = true;
+PWM2.timerCount                 = 20000;
+PWM2.pwmMode                    = "EDGE_ALIGN_UP";
+PWM2.peripheral.$assign         = "TIMG0";
+PWM2.peripheral.ccp0Pin.$assign = "PA12";
+PWM2.PWM_CHANNEL_0.$name        = "ti_driverlib_pwm_PWMTimerCC2";
+PWM2.PWM_CHANNEL_0.initVal      = "HIGH";
+PWM2.ccp0PinConfig.$name        = "ti_driverlib_gpio_GPIOPinGeneric5";
+
 SYSCTL.forceDefaultClkConfig = true;
 
 SYSTICK.periodEnable      = true;
@@ -194,8 +207,8 @@ TIMER1.timerMode          = "PERIODIC";
 TIMER1.peripheral.$assign = "TIMA1";
 
 UART1.$name                    = "UART_0";
-UART1.enabledInterrupts        = ["RX"];
 UART1.targetBaudRate           = 115200;
+UART1.enabledInterrupts        = ["RX"];
 UART1.peripheral.$assign       = "UART3";
 UART1.peripheral.rxPin.$assign = "PB3";
 UART1.peripheral.txPin.$assign = "PB2";

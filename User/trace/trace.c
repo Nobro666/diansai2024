@@ -12,6 +12,7 @@
 #include "motor.h"
 #include "pid.h"
 #include "encoder.h"
+#include "balance.h"
 /*
  * =======================================================
  * 硬件引脚映射 (Hardware Pinout Map)
@@ -88,7 +89,7 @@ PID yaw_pid;
 Motor motor_l;
 Motor motor_r;
 
-float base_target_speed = 25;
+float base_target_speed = 13;
 #define FindSpeed 16
 uint8_t drive_mode = 0;   // 0=循迹, 1=航向转向, 2=锁定直行, 3=慢速找线
 float target_angle = 0;   // 转向目标角度
@@ -154,7 +155,7 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 20, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 3, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
     PID_Init(&yaw_pid, POSITION, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
@@ -168,8 +169,10 @@ void Trace_init(void)
     Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
     Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
     //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
-    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.1, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    //
+    Balance_Init();
 }
 
 
@@ -203,7 +206,7 @@ void Control(void)
         // 3. 必须用固定时间间隔调用，保证速度计算准确 (建议用 Tick 做非阻塞延时)
         // 每隔 10ms 执行一次循迹
         static uint32_t last_loop_tick = 0;
-        if (Tick - last_loop_tick >= 10)
+        if (Tick - last_loop_tick >= 8)
          {
             last_loop_tick = Tick;
             // 从编码器驱动获取delta (GPIO中断累加, 替代TIMA1定时器读数)
@@ -233,20 +236,20 @@ void Control(void)
             motor_r.Driver(&motor_r, (int32_t)motor_r.pid.out);
 
             // 调试输出（每10ms一次，手动格式化避免sprintf卡死）
-            uart0_send_string("D:");
-            for (int i = 7; i >= 0; i--) {
-                uart0_send_char(((Digtal >> i) & 0x01) ? '1' : '0');
-            }
-            uart0_send_string(" A:");
-            for (int i = 0; i < 8; i++) {
-                uint16_t v = Anolog[i];
-                uart0_send_char('0' + v / 1000 % 10);
-                uart0_send_char('0' + v / 100  % 10);
-                uart0_send_char('0' + v / 10   % 10);
-                uart0_send_char('0' + v        % 10);
-                if (i < 7) uart0_send_char(',');
-            }
-            uart0_send_string("\r\n");
+        //     uart0_send_string("D:");
+        //     for (int i = 7; i >= 0; i--) {
+        //         uart0_send_char(((Digtal >> i) & 0x01) ? '1' : '0');
+        //     }
+        //     uart0_send_string(" A:");
+        //     for (int i = 0; i < 8; i++) {
+        //         uint16_t v = Anolog[i];
+        //         uart0_send_char('0' + v / 1000 % 10);
+        //         uart0_send_char('0' + v / 100  % 10);
+        //         uart0_send_char('0' + v / 10   % 10);
+        //         uart0_send_char('0' + v        % 10);
+        //         if (i < 7) uart0_send_char(',');
+        //     }
+        //     uart0_send_string("\r\n");
         }
 				
         // 处理按键输入

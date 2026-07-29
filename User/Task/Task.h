@@ -16,6 +16,7 @@ void Trace_TurnTo(float angle);
 void Trace_Search(void);
 bool Trace_TurnDone(void);
 void Trace_Stop(void);
-
+bool StopLineDetect(void);
+void task1(void);
 
 #endif
