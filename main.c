@@ -57,7 +57,8 @@ extern No_MCU_Sensor sensor;
 extern float current_yaw;
 
 uint8_t oled_buffer[32];
-
+void OLED_ShowTimer(void);
+uint32_t tick_start = 0;
 
 int main(void)
 {
@@ -104,6 +105,7 @@ int main(void)
     MPU6050_Init();
     OLED_Init();
     Tick_delay(2000); // 原地静止 2 秒校准
+    tick_start = tick_ms; 
 	// float Yaw_Angle=0;
 
     Interrupt_Init();
@@ -116,6 +118,8 @@ int main(void)
 
     OLED_ShowString(16*6,3,(uint8_t *)"Accel",8);
     OLED_ShowString(17*6,4,(uint8_t *)"Gyro",8);
+
+    
 
     /* 主应用程序循环 */
     while (1)
@@ -166,9 +170,44 @@ int main(void)
         // OLED_ShowString(15*6,6,oled_buffer,8);
         // sprintf((char *)oled_buffer, "%6d", gyro[2]);
         // OLED_ShowString(15*6,7,oled_buffer,8);
-    
+        OLED_ShowTimer();
+
+        
+
     }
 }
+
+
+  /**
+   * @brief OLED 显示运行计时 + 球位置 (每 500ms 刷新)
+   * @note  非阻塞, 在 main() 的 while(1) 里调用
+   */
+  void OLED_ShowTimer(void)
+  {   
+
+      static uint32_t last_oled = 0;
+      if (Tick - last_oled < 800) return;   // 500ms 刷新一次
+      last_oled = Tick;
+     
+      uint8_t t = (tick_ms - tick_start) / 1000;            // 运行秒数
+      uint8_t  mm = t / 60;
+      uint8_t  ss = t % 60;
+
+      /* 第一行: 计时器 */
+      OLED_ShowString(0, 0, (uint8_t*)"T:", 16);
+      OLED_ShowNum(16, 0, mm, 2, 16);
+      OLED_ShowChar(32, 0, ':', 16);
+      OLED_ShowNum(40, 0, ss, 2, 16);
+
+    //   /* 第二行: 球实际位置 */
+    //   OLED_ShowString(0, 2, (uint8_t*)"P:", 16);
+    //   if (bal.ball_now < 0) {
+    //       OLED_ShowChar(16, 2, '-', 16);
+    //       OLED_ShowNum(24, 2, (uint32_t)(-bal.ball_now * 10), 2, 16);
+    //   } else {
+    //       OLED_ShowNum(24, 2, (uint32_t)(bal.ball_now * 10), 2, 16);
+    //   }
+  }
 
 
 
