@@ -118,20 +118,6 @@ extern "C" {
 
 
 
-/* Defines for I2C_OLED */
-#define I2C_OLED_INST                                                       I2C1
-#define I2C_OLED_INST_IRQHandler                                 I2C1_IRQHandler
-#define I2C_OLED_INST_INT_IRQN                                     I2C1_INT_IRQn
-#define I2C_OLED_BUS_SPEED_HZ                                             400000
-#define GPIO_I2C_OLED_SDA_PORT                                             GPIOA
-#define GPIO_I2C_OLED_SDA_PIN                                     DL_GPIO_PIN_10
-#define GPIO_I2C_OLED_IOMUX_SDA                                  (IOMUX_PINCM21)
-#define GPIO_I2C_OLED_IOMUX_SDA_FUNC                   IOMUX_PINCM21_PF_I2C1_SDA
-#define GPIO_I2C_OLED_SCL_PORT                                             GPIOA
-#define GPIO_I2C_OLED_SCL_PIN                                     DL_GPIO_PIN_11
-#define GPIO_I2C_OLED_IOMUX_SCL                                  (IOMUX_PINCM22)
-#define GPIO_I2C_OLED_IOMUX_SCL_FUNC                   IOMUX_PINCM22_PF_I2C1_SCL
-
 /* Defines for I2C_MPU6050 */
 #define I2C_MPU6050_INST                                                    I2C0
 #define I2C_MPU6050_INST_IRQHandler                              I2C0_IRQHandler
@@ -147,22 +133,22 @@ extern "C" {
 #define GPIO_I2C_MPU6050_IOMUX_SCL_FUNC                 IOMUX_PINCM2_PF_I2C0_SCL
 
 
-/* Defines for UART_0 */
-#define UART_0_INST                                                        UART3
-#define UART_0_INST_FREQUENCY                                           32000000
-#define UART_0_INST_IRQHandler                                  UART3_IRQHandler
-#define UART_0_INST_INT_IRQN                                      UART3_INT_IRQn
-#define GPIO_UART_0_RX_PORT                                                GPIOB
-#define GPIO_UART_0_TX_PORT                                                GPIOB
-#define GPIO_UART_0_RX_PIN                                         DL_GPIO_PIN_3
-#define GPIO_UART_0_TX_PIN                                         DL_GPIO_PIN_2
-#define GPIO_UART_0_IOMUX_RX                                     (IOMUX_PINCM16)
-#define GPIO_UART_0_IOMUX_TX                                     (IOMUX_PINCM15)
-#define GPIO_UART_0_IOMUX_RX_FUNC                      IOMUX_PINCM16_PF_UART3_RX
-#define GPIO_UART_0_IOMUX_TX_FUNC                      IOMUX_PINCM15_PF_UART3_TX
-#define UART_0_BAUD_RATE                                                (115200)
-#define UART_0_IBRD_32_MHZ_115200_BAUD                                      (17)
-#define UART_0_FBRD_32_MHZ_115200_BAUD                                      (23)
+/* Defines for UART_k230 */
+#define UART_k230_INST                                                     UART3
+#define UART_k230_INST_FREQUENCY                                        32000000
+#define UART_k230_INST_IRQHandler                               UART3_IRQHandler
+#define UART_k230_INST_INT_IRQN                                   UART3_INT_IRQn
+#define GPIO_UART_k230_RX_PORT                                             GPIOB
+#define GPIO_UART_k230_TX_PORT                                             GPIOB
+#define GPIO_UART_k230_RX_PIN                                      DL_GPIO_PIN_3
+#define GPIO_UART_k230_TX_PIN                                      DL_GPIO_PIN_2
+#define GPIO_UART_k230_IOMUX_RX                                  (IOMUX_PINCM16)
+#define GPIO_UART_k230_IOMUX_TX                                  (IOMUX_PINCM15)
+#define GPIO_UART_k230_IOMUX_RX_FUNC                   IOMUX_PINCM16_PF_UART3_RX
+#define GPIO_UART_k230_IOMUX_TX_FUNC                   IOMUX_PINCM15_PF_UART3_TX
+#define UART_k230_BAUD_RATE                                             (115200)
+#define UART_k230_IBRD_32_MHZ_115200_BAUD                                   (17)
+#define UART_k230_FBRD_32_MHZ_115200_BAUD                                   (23)
 
 
 
@@ -210,12 +196,6 @@ extern "C" {
 /* Defines for PIN_BUZZER: GPIOA.2 with pinCMx 7 on package pin 42 */
 #define BUZZER_PIN_BUZZER_PIN                                    (DL_GPIO_PIN_2)
 #define BUZZER_PIN_BUZZER_IOMUX                                   (IOMUX_PINCM7)
-/* Port definition for Pin Group ELECTRO */
-#define ELECTRO_PORT                                                     (GPIOA)
-
-/* Defines for PIN_ELECTRO: GPIOA.17 with pinCMx 39 on package pin 10 */
-#define ELECTRO_PIN_ELECTRO_PIN                                 (DL_GPIO_PIN_17)
-#define ELECTRO_PIN_ELECTRO_IOMUX                                (IOMUX_PINCM39)
 /* Defines for BIN2: GPIOB.8 with pinCMx 25 on package pin 60 */
 #define GPIO_MOTOR_BIN2_PORT                                             (GPIOB)
 #define GPIO_MOTOR_BIN2_PIN                                      (DL_GPIO_PIN_8)
@@ -272,6 +252,15 @@ extern "C" {
 #define ENCODERB_EB2_IIDX                                   (DL_GPIO_IIDX_DIO28)
 #define ENCODERB_EB2_PIN                                        (DL_GPIO_PIN_28)
 #define ENCODERB_EB2_IOMUX                                        (IOMUX_PINCM3)
+/* Port definition for Pin Group GPIO_OLED */
+#define GPIO_OLED_PORT                                                   (GPIOA)
+
+/* Defines for PIN_OLED_SCL: GPIOA.16 with pinCMx 38 on package pin 9 */
+#define GPIO_OLED_PIN_OLED_SCL_PIN                              (DL_GPIO_PIN_16)
+#define GPIO_OLED_PIN_OLED_SCL_IOMUX                             (IOMUX_PINCM38)
+/* Defines for PIN_OLED_SDA: GPIOA.17 with pinCMx 39 on package pin 10 */
+#define GPIO_OLED_PIN_OLED_SDA_PIN                              (DL_GPIO_PIN_17)
+#define GPIO_OLED_PIN_OLED_SDA_IOMUX                             (IOMUX_PINCM39)
 
 
 
@@ -285,9 +274,8 @@ void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
 void SYSCFG_DL_PWM_Servo_init(void);
 void SYSCFG_DL_TIMER_Encoder_init(void);
-void SYSCFG_DL_I2C_OLED_init(void);
 void SYSCFG_DL_I2C_MPU6050_init(void);
-void SYSCFG_DL_UART_0_init(void);
+void SYSCFG_DL_UART_k230_init(void);
 void SYSCFG_DL_ADC_VOLTAGE_init(void);
 void SYSCFG_DL_DMA_init(void);
 

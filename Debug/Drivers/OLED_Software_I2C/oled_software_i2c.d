@@ -1,8 +1,8 @@
 # FIXED
 
-Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o: \
- ../Drivers/OLED_Hardware_I2C/oled_hardware_i2c.c \
- ../Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
+Drivers/OLED_Software_I2C/oled_software_i2c.o: \
+ ../Drivers/OLED_Software_I2C/oled_software_i2c.c \
+ ../Drivers/OLED_Software_I2C/oled_software_i2c.h \
  ti_msp_dl_config.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h \
@@ -86,9 +86,9 @@ Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o: \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h \
- ../Drivers/OLED_Hardware_I2C/oledfont.h \
+ ../Drivers/OLED_Software_I2C/oledfont.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/clock.h
-../Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
+../Drivers/OLED_Software_I2C/oled_software_i2c.h:
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h:
@@ -172,5 +172,5 @@ D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_vref.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h:
-../Drivers/OLED_Hardware_I2C/oledfont.h:
+../Drivers/OLED_Software_I2C/oledfont.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/clock.h:

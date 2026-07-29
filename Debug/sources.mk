@@ -122,7 +122,7 @@ SUBDIRS := \
 Driver \
 Drivers/MPU6050 \
 Drivers/MSPM0 \
-Drivers/OLED_Hardware_I2C \
+Drivers/OLED_Software_I2C \
 Motor \
 User/BUZZER \
 User/Distance \

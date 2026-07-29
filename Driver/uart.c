@@ -1,8 +1,8 @@
 #include "uart.h"
 void uart0_send_char(char ch)
 {
-	while( DL_UART_isBusy(UART_0_INST) == true );
-	DL_UART_Main_transmitData(UART_0_INST, ch);
+	while( DL_UART_isBusy(UART_k230_INST) == true );
+	DL_UART_Main_transmitData(UART_k230_INST, ch);
 
 }
 void uart0_send_string(char* str)

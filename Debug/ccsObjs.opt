@@ -16,7 +16,7 @@
 "./Drivers/MPU6050/mspm0_i2c.o"
 "./Drivers/MSPM0/clock.o"
 "./Drivers/MSPM0/interrupt.o"
-"./Drivers/OLED_Hardware_I2C/oled_hardware_i2c.o"
+"./Drivers/OLED_Software_I2C/oled_software_i2c.o"
 "./Motor/motor.o"
 "./User/BUZZER/BUZZER.o"
 "./User/Distance/Distance.o"

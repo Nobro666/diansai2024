@@ -68,7 +68,7 @@ int main(void)
     // 初始化LED
     LED_init();
    
-    SYSCFG_DL_UART_0_init();
+    SYSCFG_DL_UART_k230_init();
     uart0_send_string("Start System OK\r\n");
     /* DMA配置 - 用于ADC数据传输 */
     // 设置DMA源地址(ADC存储器)

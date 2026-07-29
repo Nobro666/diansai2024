@@ -4,17 +4,6 @@ int notify_tick;
 int notify_flag;
 
 
-void ELECTRO_ON(void)
-{
-    DL_GPIO_setPins(ELECTRO_PORT,ELECTRO_PIN_ELECTRO_PIN);
-}
-
-
-void ELECTRO_OFF(void)
-{
-    DL_GPIO_clearPins(ELECTRO_PORT,ELECTRO_PIN_ELECTRO_PIN);
-}
-
 void BEE_OFF(void)
 {
     DL_GPIO_setPins(BUZZER_PORT,BUZZER_PIN_BUZZER_PIN);

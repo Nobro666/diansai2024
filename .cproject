@@ -48,6 +48,7 @@
                                     <listOptionValue value="${PROJECT_ROOT}/User/Distance"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/BUZZER"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/balance"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/User/OLED_Software_I2C"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User"/>
                                     <listOptionValue value="${PROJECT_ROOT}"/>
                                     <listOptionValue value="${PROJECT_ROOT}/${ConfigName}"/>
@@ -106,7 +107,7 @@
                         </toolChain>
                     </folderInfo>
                     <sourceEntries>
-                        <entry excluding="Drivers/WIT|Drivers/VL53L0X|Drivers/Ultrasonic_GPIO|Drivers/Ultrasonic_Capture|Drivers/OLED_Software_SPI|Drivers/OLED_Software_I2C|Drivers/OLED_Hardware_SPI|Drivers/LSM6DSV16X|Drivers/BNO08X_UART_RVC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="Drivers/OLED_Hardware_I2C|Drivers/WIT|Drivers/VL53L0X|Drivers/Ultrasonic_GPIO|Drivers/Ultrasonic_Capture|Drivers/OLED_Software_SPI|Drivers/OLED_Hardware_SPI|Drivers/LSM6DSV16X|Drivers/BNO08X_UART_RVC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                     </sourceEntries>
                 </configuration>
             </storageModule>

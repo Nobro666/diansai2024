@@ -162,6 +162,23 @@ void task1(void)
 }
 
 
+/* K230 视觉模块 UART 接收 */
+static char   k230_buf[32];
+static uint8_t k230_idx = 0;
+void UART_k230_INST_IRQHandler(void)
+{
+    switch (DL_UART_Main_getPendingInterrupt(UART_k230_INST)) {
+        case DL_UART_MAIN_IIDX_RX:
+            // DL_GPIO_togglePins(GPIO_LEDS_PORT,
+            //     GPIO_LEDS_USER_LED_1_PIN | GPIO_LEDS_USER_TEST_PIN);
+            // gEchoData = DL_UART_Main_receiveData(UART_k230_INST);
+            // DL_UART_Main_transmitData(UART_k230_INST, gEchoData);
+            break;
+        default:
+            break;
+    }
+}
+
 
 
 // /******************************************************************************
