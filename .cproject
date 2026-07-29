@@ -48,12 +48,12 @@
                                     <listOptionValue value="${PROJECT_ROOT}/User/Distance"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/BUZZER"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User/balance"/>
-                                    <listOptionValue value="${PROJECT_ROOT}/User/OLED_Software_I2C"/>
                                     <listOptionValue value="${PROJECT_ROOT}/User"/>
                                     <listOptionValue value="${PROJECT_ROOT}"/>
                                     <listOptionValue value="${PROJECT_ROOT}/${ConfigName}"/>
                                     <listOptionValue value="${COM_TI_MSPM0_SDK_INSTALL_DIR}/source/third_party/CMSIS/Core/Include"/>
                                     <listOptionValue value="${COM_TI_MSPM0_SDK_INSTALL_DIR}/source"/>
+                                    <listOptionValue value="${PROJECT_ROOT}/Drivers/OLED_Software_I2C"/>
                                 </option>
                                 <option id="com.ti.ccstudio.buildDefinitions.TMS470_TICLANG_4.0.compilerID.DEFINE.1652678050" superClass="com.ti.ccstudio.buildDefinitions.TMS470_TICLANG_4.0.compilerID.DEFINE" valueType="definedSymbols">
                                     <listOptionValue value="${COM_TI_MSPM0_SDK_SYMBOLS}"/>

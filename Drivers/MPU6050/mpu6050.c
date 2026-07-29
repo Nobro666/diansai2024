@@ -198,7 +198,7 @@ void MPU6050_Init(void)
         return;
 
     /* Enable INT_GROUP1 handler. */
-    enable_group1_irq = 1;
+    enable_group1_irq = 0;
 }
 
 int Read_Quad(void)

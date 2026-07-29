@@ -42,6 +42,7 @@
 #include "trace.h"
 #include "pid.h"
 #include "Task.h"
+#include "oled_software_i2c.h"
 
 extern Motor motor_l;
 extern Motor motor_r;
@@ -54,6 +55,8 @@ extern unsigned short black[8];     // 存储黑色校准值的数组
 extern unsigned short Normal[8];          // 归一化值数组
 extern No_MCU_Sensor sensor;
 extern float current_yaw;
+
+uint8_t oled_buffer[32];
 
 
 int main(void)
@@ -99,8 +102,20 @@ int main(void)
     
     //初始化陀螺仪
     MPU6050_Init();
+    OLED_Init();
     Tick_delay(2000); // 原地静止 2 秒校准
 	// float Yaw_Angle=0;
+
+    Interrupt_Init();
+
+    OLED_ShowString(0,7,(uint8_t *)"MPU6050 Demo",8);
+
+    OLED_ShowString(0,0,(uint8_t *)"Pitch",8);
+    OLED_ShowString(0,2,(uint8_t *)" Roll",8);
+    OLED_ShowString(0,4,(uint8_t *)"  Yaw",8);
+
+    OLED_ShowString(16*6,3,(uint8_t *)"Accel",8);
+    OLED_ShowString(17*6,4,(uint8_t *)"Gyro",8);
 
     /* 主应用程序循环 */
     while (1)
@@ -129,6 +144,29 @@ int main(void)
         task1();
 
         // DL_TimerG_setCaptureCompareValue(PWM_Servo_INST, 1500, DL_TIMER_CC_0_INDEX);
+
+        // Read_Quad();
+        // sprintf((char *)oled_buffer, "%-6.1f", pitch);
+        // OLED_ShowString(5*8,0,oled_buffer,16);
+        // sprintf((char *)oled_buffer, "%-6.1f", roll);
+        // OLED_ShowString(5*8,2,oled_buffer,16);
+        // sprintf((char *)oled_buffer, "%-6.1f", yaw);
+        // OLED_ShowString(5*8,4,oled_buffer,16);
+
+        // sprintf((char *)oled_buffer, "%6d", accel[0]);
+        // OLED_ShowString(15*6,0,oled_buffer,8);
+        // sprintf((char *)oled_buffer, "%6d", accel[1]);
+        // OLED_ShowString(15*6,1,oled_buffer,8);
+        // sprintf((char *)oled_buffer, "%6d", accel[2]);
+        // OLED_ShowString(15*6,2,oled_buffer,8);
+
+        // sprintf((char *)oled_buffer, "%6d", gyro[0]);
+        // OLED_ShowString(15*6,5,oled_buffer,8);
+        // sprintf((char *)oled_buffer, "%6d", gyro[1]);
+        // OLED_ShowString(15*6,6,oled_buffer,8);
+        // sprintf((char *)oled_buffer, "%6d", gyro[2]);
+        // OLED_ShowString(15*6,7,oled_buffer,8);
+    
     }
 }
 
