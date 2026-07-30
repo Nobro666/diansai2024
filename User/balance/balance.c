@@ -6,8 +6,8 @@ BalanceCtrl bal;
 
 void Balance_Init(void)
 {
-    PID_Init(&bal.pos_pid, POSITION, 10.0f, 2.0f,  1.0f, 0, 0);
-    PID_Init(&bal.ang_pid, POSITION, 30.0f, 5.0f,  2.0f, 0, 0);
+    PID_Init(&bal.pos_pid, POSITION, 10.0f, 2.0f,  2.0f, 0.1, 0);
+    PID_Init(&bal.ang_pid, POSITION, 30.0f, 5.0f,  4.0f, 0.1, 0);
     bal.ball_target = 0.0f;
     bal.ball_now    = 0.0f;
     bal.servo_pwm   = 1500;

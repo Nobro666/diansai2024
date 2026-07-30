@@ -29,6 +29,7 @@ const SYSCTL  = scripting.addModule("/ti/driverlib/SYSCTL");
 const SYSTICK = scripting.addModule("/ti/driverlib/SYSTICK");
 const TIMER   = scripting.addModule("/ti/driverlib/TIMER", {}, false);
 const TIMER1  = TIMER.addInstance();
+const TIMER2  = TIMER.addInstance();
 const UART    = scripting.addModule("/ti/driverlib/UART", {}, false);
 const UART1   = UART.addInstance();
 
@@ -193,6 +194,12 @@ TIMER1.timerPeriod        = "10 ms";
 TIMER1.timerClkPrescale   = 32;
 TIMER1.timerMode          = "PERIODIC";
 TIMER1.peripheral.$assign = "TIMA1";
+
+TIMER2.$name              = "TIMER_Tick";
+TIMER2.timerMode          = "PERIODIC_UP";
+TIMER2.timerStartTimer    = true;
+TIMER2.timerPeriod        = "100000ms";
+TIMER2.peripheral.$assign = "TIMG12";
 
 UART1.targetBaudRate                   = 115200;
 UART1.enabledInterrupts                = ["RX"];

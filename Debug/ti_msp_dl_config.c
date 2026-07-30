@@ -57,6 +57,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_init(void)
     SYSCFG_DL_PWM_MOTOR_init();
     SYSCFG_DL_PWM_Servo_init();
     SYSCFG_DL_TIMER_Encoder_init();
+    SYSCFG_DL_TIMER_Tick_init();
     SYSCFG_DL_I2C_MPU6050_init();
     SYSCFG_DL_UART_k230_init();
     SYSCFG_DL_ADC_VOLTAGE_init();
@@ -102,6 +103,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerA_reset(PWM_MOTOR_INST);
     DL_TimerG_reset(PWM_Servo_INST);
     DL_TimerA_reset(TIMER_Encoder_INST);
+    DL_TimerG_reset(TIMER_Tick_INST);
     DL_I2C_reset(I2C_MPU6050_INST);
     DL_UART_Main_reset(UART_k230_INST);
     DL_ADC12_reset(ADC_VOLTAGE_INST);
@@ -113,6 +115,7 @@ SYSCONFIG_WEAK void SYSCFG_DL_initPower(void)
     DL_TimerA_enablePower(PWM_MOTOR_INST);
     DL_TimerG_enablePower(PWM_Servo_INST);
     DL_TimerA_enablePower(TIMER_Encoder_INST);
+    DL_TimerG_enablePower(TIMER_Tick_INST);
     DL_I2C_enablePower(I2C_MPU6050_INST);
     DL_UART_Main_enablePower(UART_k230_INST);
     DL_ADC12_enablePower(ADC_VOLTAGE_INST);
@@ -379,6 +382,42 @@ SYSCONFIG_WEAK void SYSCFG_DL_TIMER_Encoder_init(void) {
     DL_TimerA_initTimerMode(TIMER_Encoder_INST,
         (DL_TimerA_TimerConfig *) &gTIMER_EncoderTimerConfig);
     DL_TimerA_enableClock(TIMER_Encoder_INST);
+
+
+
+
+
+}
+
+/*
+ * Timer clock configuration to be sourced by BUSCLK /  (32000000 Hz)
+ * timerClkFreq = (timerClkSrc / (timerClkDivRatio * (timerClkPrescale + 1)))
+ *   32000000 Hz = 32000000 Hz / (1 * (0 + 1))
+ */
+static const DL_TimerG_ClockConfig gTIMER_TickClockConfig = {
+    .clockSel    = DL_TIMER_CLOCK_BUSCLK,
+    .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
+    .prescale    = 0U,
+};
+
+/*
+ * Timer load value (where the counter starts from) is calculated as (timerPeriod * timerClockFreq) - 1
+ * TIMER_Tick_INST_LOAD_VALUE = (100000ms * 32000000 Hz) - 1
+ */
+static const DL_TimerG_TimerConfig gTIMER_TickTimerConfig = {
+    .period     = TIMER_Tick_INST_LOAD_VALUE,
+    .timerMode  = DL_TIMER_TIMER_MODE_PERIODIC_UP,
+    .startTimer = DL_TIMER_START,
+};
+
+SYSCONFIG_WEAK void SYSCFG_DL_TIMER_Tick_init(void) {
+
+    DL_TimerG_setClockConfig(TIMER_Tick_INST,
+        (DL_TimerG_ClockConfig *) &gTIMER_TickClockConfig);
+
+    DL_TimerG_initTimerMode(TIMER_Tick_INST,
+        (DL_TimerG_TimerConfig *) &gTIMER_TickTimerConfig);
+    DL_TimerG_enableClock(TIMER_Tick_INST);
 
 
 

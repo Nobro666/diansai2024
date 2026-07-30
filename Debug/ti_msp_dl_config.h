@@ -114,6 +114,11 @@ extern "C" {
 #define TIMER_Encoder_INST_IRQHandler                           TIMA1_IRQHandler
 #define TIMER_Encoder_INST_INT_IRQN                             (TIMA1_INT_IRQn)
 #define TIMER_Encoder_INST_LOAD_VALUE                                    (9999U)
+/* Defines for TIMER_Tick */
+#define TIMER_Tick_INST                                                 (TIMG12)
+#define TIMER_Tick_INST_IRQHandler                             TIMG12_IRQHandler
+#define TIMER_Tick_INST_INT_IRQN                               (TIMG12_INT_IRQn)
+#define TIMER_Tick_INST_LOAD_VALUE                                 (3199999999U)
 
 
 
@@ -274,6 +279,7 @@ void SYSCFG_DL_SYSCTL_init(void);
 void SYSCFG_DL_PWM_MOTOR_init(void);
 void SYSCFG_DL_PWM_Servo_init(void);
 void SYSCFG_DL_TIMER_Encoder_init(void);
+void SYSCFG_DL_TIMER_Tick_init(void);
 void SYSCFG_DL_I2C_MPU6050_init(void);
 void SYSCFG_DL_UART_k230_init(void);
 void SYSCFG_DL_ADC_VOLTAGE_init(void);

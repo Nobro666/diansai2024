@@ -114,14 +114,14 @@ int main(void)
 
     Interrupt_Init();
 
-    OLED_ShowString(0,7,(uint8_t *)"MPU6050 Demo",8);
+    // OLED_ShowString(0,7,(uint8_t *)"MPU6050 Demo",8);
 
-    OLED_ShowString(0,0,(uint8_t *)"Pitch",8);
-    OLED_ShowString(0,2,(uint8_t *)" Roll",8);
-    OLED_ShowString(0,4,(uint8_t *)"  Yaw",8);
+    // OLED_ShowString(0,0,(uint8_t *)"Pitch",8);
+    // OLED_ShowString(0,2,(uint8_t *)" Roll",8);
+    // OLED_ShowString(0,4,(uint8_t *)"  Yaw",8);
 
-    OLED_ShowString(16*6,3,(uint8_t *)"Accel",8);
-    OLED_ShowString(17*6,4,(uint8_t *)"Gyro",8);
+    // OLED_ShowString(16*6,3,(uint8_t *)"Accel",8);
+    // OLED_ShowString(17*6,4,(uint8_t *)"Gyro",8);
 
     
 
@@ -199,9 +199,9 @@ int main(void)
       if (Tick - last_oled < 800) return;   // 500ms 刷新一次
       last_oled = Tick;
      
-      uint8_t t = (tick_ms - tick_start) / 1000;            // 运行秒数
-      uint8_t  mm = t / 60;
-      uint8_t  ss = t % 60;
+      uint32_t t = (tick_ms - tick_start) / 1000;            // 运行秒数
+      uint32_t  mm = t / 60;
+      uint32_t  ss = t % 60;
 
       /* 第一行: 计时器 */
       OLED_ShowString(0, 0, (uint8_t*)"T:", 16);
@@ -209,14 +209,14 @@ int main(void)
       OLED_ShowChar(32, 0, ':', 16);
       OLED_ShowNum(40, 0, ss, 2, 16);
 
-    //   /* 第二行: 球实际位置 */
-    //   OLED_ShowString(0, 2, (uint8_t*)"P:", 16);
-    //   if (bal.ball_now < 0) {
-    //       OLED_ShowChar(16, 2, '-', 16);
-    //       OLED_ShowNum(24, 2, (uint32_t)(-bal.ball_now * 10), 2, 16);
-    //   } else {
-    //       OLED_ShowNum(24, 2, (uint32_t)(bal.ball_now * 10), 2, 16);
-    //   }
+      /* 第二行: 球实际位置 */
+      OLED_ShowString(0, 2, (uint8_t*)"P:", 16);
+      if (bal.ball_now < 0) {
+          OLED_ShowChar(16, 2, '-', 16);
+          OLED_ShowNum(24, 2, (uint32_t)(-bal.ball_now * 10), 2, 16);
+      } else {
+          OLED_ShowNum(24, 2, (uint32_t)(bal.ball_now * 10), 2, 16);
+      }
   }
 
 
