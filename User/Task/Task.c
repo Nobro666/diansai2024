@@ -14,8 +14,11 @@
 #include "encoder.h"
 #include "Distance.h"
 #include "BUZZER.h"
+#include "motor.h"
 
 
+extern Motor motor_l;
+extern Motor motor_r;
 extern unsigned char Digtal;
 extern uint8_t drive_mode;
 extern float target_angle;
@@ -23,6 +26,7 @@ extern bool  heading_relock;
 extern Motor motor_l;
 extern Motor motor_r;
 extern PID tracking_pid;
+extern float base_target_speed;
 
 
 static bool FindLine(void)
@@ -143,22 +147,82 @@ void Trace_Stop(void) {
 }
 
 
+// void task1(void)
+// {   
+//     static bool finish=false;
+
+//     if(finish)
+//     {
+//         Trace_Stop();
+//         return;
+//     }
+
+//     Trace_Follow();
+
+//     if(GetDistance()>580.0f)
+//     {
+//         finish=true;
+//     }
+// }
+
+
+// void task1(void)
+//   {
+//       /* 阶段1: 前 1s 直走, 不循迹 */
+//       static bool  started = false;
+//       static int   frame   = 0;
+
+//       if (!started) {
+//           motor_l.speed_set = base_target_speed;
+//           motor_r.speed_set = base_target_speed;
+//           Control();                       // 编码器+PID闭环, 直走
+//           frame++;
+//           if (frame > 50) started = true; // 100帧 (~1s)
+//           return;
+//       }
+
+//       /* 阶段2: 循迹直到行驶指定距离 */
+//       static bool finish = false;
+
+//       if (finish) {
+//           Trace_Stop();
+//           return;
+//       }
+
+//       Trace_Follow();
+//       if (GetDistance() > 580.0f) finish = true;
+//   }
+
+
 void task1(void)
 {
-    static bool finish=false;
+    static bool started = false;
+    static int  frame   = 0;
 
-    if(finish)
+    /* 阶段1: 前 50 帧 (~0.5s) 手动直走, 跳过 Motor_Ctrl */
+    if (!started)
     {
-        Trace_Stop();
+        // if (frame == 0) 
+        // {
+        //     DL_GPIO_setPins(GPIO_MOTOR_PIN_STBY_PORT, GPIO_MOTOR_PIN_STBY_PIN); // 开驱动
+        // }
+        motor_l.speed_set = base_target_speed;
+        motor_r.speed_set = base_target_speed;
+        motor_l.Calc(&motor_l);           // 温和加速
+        motor_r.Calc(&motor_r);
+        motor_l.Driver(&motor_l, (int32_t)motor_l.pid.out);
+        motor_r.Driver(&motor_r, (int32_t)motor_r.pid.out);
+        frame++;
+        if (frame > 50) 
+            started = true;
         return;
     }
 
+    /* 阶段2: 循迹 */
+    static bool finish = false;
+    if (finish) { Trace_Stop(); return; }
     Trace_Follow();
-
-    if(GetDistance()>580.0f)
-    {
-        finish=true;
-    }
+    if (GetDistance() > 550.0f) finish = true;
 }
 
 

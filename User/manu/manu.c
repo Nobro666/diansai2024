@@ -3,6 +3,7 @@
 #include "Task.h"
 #include "key.h"
 #include "clock.h"
+#include "encoder.h"
 
 /* 任务函数, 需要在其他 .c 里定义好 */
 extern void task1(void);
@@ -47,11 +48,23 @@ void Menu_Update(void)
     if (menu.click_cnt >= 2) {
         menu.click_cnt = 0;
 
-        if (menu.state == MENU_RUNNING) {
+        if (menu.state == MENU_RUNNING) 
+        {
             /* 任务执行中双击 → 退回菜单 */
             menu.state = MENU_IDLE;
-        } else {
-            /* 菜单界面双击 → 选中并执行 */
+        } 
+        else
+        {
+            /* 菜单界面双击 → 刹车 + 清 PID + 清编码器, 再启动 */
+            extern Motor motor_l, motor_r;
+            extern PID tracking_pid;
+            motor_l.Driver(&motor_l, 0);          // 先刹停
+            motor_r.Driver(&motor_r, 0);
+            PID_clear(&tracking_pid);
+            PID_clear(&motor_l.pid);
+            PID_clear(&motor_r.pid);
+            Encoder_GetDelta(&encL);               // 吃编码器旧值
+            Encoder_GetDelta(&encR);
             menu.state = MENU_RUNNING;
             tick_start = tick_ms;
         }

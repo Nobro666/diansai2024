@@ -95,7 +95,8 @@ User/manu/manu.o: ../User/manu/manu.c ../User/manu/manu.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MPU6050/mpu6050.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Software_I2C/oled_software_i2c.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/User/Task/Task.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h
+ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/encoder.h
 ../User/manu/manu.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h:
 ti_msp_dl_config.h:
@@ -192,3 +193,4 @@ C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MPU6050/mpu6050.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Software_I2C/oled_software_i2c.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/User/Task/Task.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/Driver/encoder.h:

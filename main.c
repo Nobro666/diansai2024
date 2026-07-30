@@ -70,7 +70,6 @@ int main(void)
 {
     // 初始化系统配置
     SYSCFG_DL_init();
-    DL_TimerG_setCaptureCompareValue(PWM_Servo_INST, 500, DL_TIMER_CC_0_INDEX);
 
     __enable_irq();
     SysTick_Init();
@@ -112,6 +111,9 @@ int main(void)
     MPU6050_Init();
     OLED_Init();
     Menu_Init();
+
+    //舵机初始化
+    //Balance_Init();
 
     Tick_delay(2000); // 原地静止 2 秒校准
     tick_start = tick_ms; 
@@ -162,43 +164,14 @@ int main(void)
         // Control();
         // task1();
 
-        // DL_TimerG_setCaptureCompareValue(PWM_Servo_INST, 1500, DL_TIMER_CC_0_INDEX);
+        // DL_TimerG_setCaptureCompareValue(PWM_Servo_INST, 1440, DL_TIMER_CC_0_INDEX);
 
-        // Read_Quad();
-        // sprintf((char *)oled_buffer, "%-6.1f", pitch);
-        // OLED_ShowString(5*8,0,oled_buffer,16);
-        // sprintf((char *)oled_buffer, "%-6.1f", roll);
-        // OLED_ShowString(5*8,2,oled_buffer,16);
-        // sprintf((char *)oled_buffer, "%-6.1f", yaw);
-        // OLED_ShowString(5*8,4,oled_buffer,16);
-
-        // sprintf((char *)oled_buffer, "%6d", accel[0]);
-        // OLED_ShowString(15*6,0,oled_buffer,8);
-        // sprintf((char *)oled_buffer, "%6d", accel[1]);
-        // OLED_ShowString(15*6,1,oled_buffer,8);
-        // sprintf((char *)oled_buffer, "%6d", accel[2]);
-        // OLED_ShowString(15*6,2,oled_buffer,8);
-
-        // sprintf((char *)oled_buffer, "%6d", gyro[0]);
-        // OLED_ShowString(15*6,5,oled_buffer,8);
-        // sprintf((char *)oled_buffer, "%6d", gyro[1]);
-        // OLED_ShowString(15*6,6,oled_buffer,8);
-        // sprintf((char *)oled_buffer, "%6d", gyro[2]);
-        // OLED_ShowString(15*6,7,oled_buffer,8);
-        // OLED_ShowTimer();
 
         Menu_Update();
-        static bool first_frame = true;
+
         if (menu.state == MENU_RUNNING) 
         {   
-            if (first_frame) 
-            {
-                Encoder_GetDelta(&encL);   // 吃掉菜单期间累积的旧值
-                Encoder_GetDelta(&encR);
-                PID_clear(&motor_l.pid);
-                PID_clear(&motor_r.pid);
-                first_frame = false;
-            }
+     
             switch (menu.cursor) {
                 case 0: task1(); break;
                 case 1: task2(); break;
@@ -210,7 +183,7 @@ int main(void)
         }
         else
         {   
-            first_frame = true;
+
             Menu_ShowOLED();
         }
 

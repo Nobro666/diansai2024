@@ -105,9 +105,16 @@ void Motor_Ctrl(float err)
     corr_filtered = 0.8f * turn_correction + 0.2f * corr_filtered;
     turn_correction = corr_filtered;
 
+    // 死区: 微小修正忽略, 直行更丝滑
+    if (fabs(turn_correction) < 0.5f) turn_correction = 0.0f;
+
+    // 入弯降速: 误差越大 base 越低, 急弯不冲
+    float dynamic_base = base_target_speed * (1.0f - fabs(err) / 5.0f);
+    if (dynamic_base < base_target_speed * 0.3f) dynamic_base = base_target_speed * 0.3f;
+
     // 左右轮目标速度 = 基础速度 ± 差速修正
-    float left_target  = base_target_speed + turn_correction;
-    float right_target = base_target_speed - turn_correction;
+    float left_target  = dynamic_base  + turn_correction;
+    float right_target = dynamic_base  - turn_correction;
 
     // 速度限幅
     float max_speed = 200;  //3000
@@ -160,7 +167,7 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 3.75f, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10/3.8/3/4, 0.0f, 0.0f
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 4.0f, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10/3.8/3/4, 0.0f, 0.0f
     PID_Init(&yaw_pid, POSITION, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
@@ -176,8 +183,6 @@ void Trace_init(void)
     //电机PID参数初始化
     motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2/0.17, 0, 0
     motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2/0.17, 0, 0
-    //
-    Balance_Init();
 }
 
 
