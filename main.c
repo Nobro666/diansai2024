@@ -44,10 +44,13 @@
 #include "Task.h"
 #include "oled_software_i2c.h"
 #include "balance.h"
+#include "manu.h"
+#include "encoder.h"
 
 extern Motor motor_l;
 extern Motor motor_r;
 extern PID tracking_pid; 
+extern Menu menu;
 
 
 extern unsigned short Anolog[8] ;    // 存储当前模拟量值的数组
@@ -108,6 +111,8 @@ int main(void)
     //初始化陀螺仪
     MPU6050_Init();
     OLED_Init();
+    Menu_Init();
+
     Tick_delay(2000); // 原地静止 2 秒校准
     tick_start = tick_ms; 
 	// float Yaw_Angle=0;
@@ -155,7 +160,7 @@ int main(void)
         // }
         // Balance_Control();
         // Control();
-        task1();
+        // task1();
 
         // DL_TimerG_setCaptureCompareValue(PWM_Servo_INST, 1500, DL_TIMER_CC_0_INDEX);
 
@@ -180,7 +185,35 @@ int main(void)
         // OLED_ShowString(15*6,6,oled_buffer,8);
         // sprintf((char *)oled_buffer, "%6d", gyro[2]);
         // OLED_ShowString(15*6,7,oled_buffer,8);
-        OLED_ShowTimer();
+        // OLED_ShowTimer();
+
+        Menu_Update();
+        static bool first_frame = true;
+        if (menu.state == MENU_RUNNING) 
+        {   
+            if (first_frame) 
+            {
+                Encoder_GetDelta(&encL);   // 吃掉菜单期间累积的旧值
+                Encoder_GetDelta(&encR);
+                PID_clear(&motor_l.pid);
+                PID_clear(&motor_r.pid);
+                first_frame = false;
+            }
+            switch (menu.cursor) {
+                case 0: task1(); break;
+                case 1: task2(); break;
+                case 2: task3(); break;
+                case 3: task4(); break;
+                case 4: task5(); break;
+            }
+            OLED_ShowTimer();
+        }
+        else
+        {   
+            first_frame = true;
+            Menu_ShowOLED();
+        }
+
 
         
 
@@ -196,6 +229,10 @@ int main(void)
   {   
 
       static uint32_t last_oled = 0;
+      static bool first = true;
+
+      if (first) { OLED_Clear(); first = false; }  // 进来先清屏
+      if (Tick - last_oled < 800) return;
       if (Tick - last_oled < 800) return;   // 500ms 刷新一次
       last_oled = Tick;
      

@@ -129,5 +129,6 @@ User/Distance \
 User/PID \
 User/Task \
 User/balance \
+User/manu \
 User/trace \
 

@@ -23,6 +23,7 @@
 "./User/PID/pid.o"
 "./User/Task/Task.o"
 "./User/balance/balance.o"
+"./User/manu/manu.o"
 "./User/trace/trace.o"
 -l"./device_linker.cmd"
 -ldevice.cmd.genlibs

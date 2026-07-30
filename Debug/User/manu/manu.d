@@ -1,6 +1,7 @@
 # FIXED
 
-main.o: ../main.c \
+User/manu/manu.o: ../User/manu/manu.c ../User/manu/manu.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h \
  ti_msp_dl_config.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h \
@@ -84,26 +85,19 @@ main.o: ../main.c \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h \
  D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/No_Mcu_Ganv_Grayscale_Sensor_Config.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/adc.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/delay.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/led.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/uart.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/trace/trace.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/delay.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/trace/trace.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/User/PID/pid.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/clock.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/interrupt.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MPU6050/mpu6050.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/Task/Task.h \
  C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Software_I2C/oled_software_i2c.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/balance/balance.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/User/manu/manu.h \
- C:/Users/21943/workspace_ccstheia/diansai2024/Driver/encoder.h
+ C:/Users/21943/workspace_ccstheia/diansai2024/User/Task/Task.h \
+ C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h
+../User/manu/manu.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h:
 ti_msp_dl_config.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/msp/msp.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/devices/DeviceFamily.h:
@@ -187,23 +181,14 @@ D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_vref.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/dl_wwdt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_interrupt.h:
 D:/ti/mspm0_sdk_2_10_00_04/source/ti/driverlib/m0p/dl_systick.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/No_Mcu_Ganv_Grayscale_Sensor_Config.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/adc.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/delay.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/led.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/uart.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/flash.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/User/trace/trace.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/headfile.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Hardware_I2C/oled_hardware_i2c.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/Driver/delay.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Motor/motor.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/trace/trace.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/User/PID/pid.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/clock.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MSPM0/interrupt.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/MPU6050/mpu6050.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/User/Task/Task.h:
 C:/Users/21943/workspace_ccstheia/diansai2024/Drivers/OLED_Software_I2C/oled_software_i2c.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/User/balance/balance.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/User/manu/manu.h:
-C:/Users/21943/workspace_ccstheia/diansai2024/Driver/encoder.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/User/Task/Task.h:
+C:/Users/21943/workspace_ccstheia/diansai2024/Driver/key.h:

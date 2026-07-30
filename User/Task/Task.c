@@ -155,10 +155,33 @@ void task1(void)
 
     Trace_Follow();
 
-    if(GetDistance()>388.0f)
+    if(GetDistance()>580.0f)
     {
         finish=true;
     }
+}
+
+
+void task2(void)
+{
+
+}
+
+void task3(void)
+{
+    
+}
+
+
+void task4(void)
+{
+    
+}
+
+
+void task5(void)
+{
+    
 }
 
 

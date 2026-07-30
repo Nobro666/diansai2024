@@ -100,6 +100,11 @@ void Motor_Ctrl(float err)
     // 纠偏 PID → 差速值
     float turn_correction = PID_Calc(&tracking_pid, err, 0.0f);
 
+    // 滤波, 平滑突变
+    static float corr_filtered = 0;
+    corr_filtered = 0.8f * turn_correction + 0.2f * corr_filtered;
+    turn_correction = corr_filtered;
+
     // 左右轮目标速度 = 基础速度 ± 差速修正
     float left_target  = base_target_speed + turn_correction;
     float right_target = base_target_speed - turn_correction;
@@ -155,7 +160,7 @@ float Calculate_Position_Error(unsigned char digtal)
 void Trace_init(void)
 {
     // 初始化纠偏 PID (位置式/增量式均可，这里推位置式，纠偏更平滑)
-    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 3, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10, 0.0f, 0.0f
+    PID_Init(&tracking_pid, DELTA, 40.0f, 5.0f, 3.75f, 0.0f, 0.0f);//DELTA, 40.0f, 5.0f, 10/3.8/3/4, 0.0f, 0.0f
     PID_Init(&yaw_pid, POSITION, 35.0f, 0.0f, 0.6, 0.0f, 0.0f);
     // 给电机初始化目标速度 (初始为0，防止一上电猛冲)
     motor_l.speed_set = 0;
@@ -169,8 +174,8 @@ void Trace_init(void)
     Encoder_Init(&encL, GPIOA, DL_GPIO_PIN_7,  GPIOA, DL_GPIO_PIN_26, PULSE_PRE_ROUND);
     Encoder_Init(&encR, GPIOA, DL_GPIO_PIN_28, GPIOB, DL_GPIO_PIN_6,  PULSE_PRE_ROUND);
     //电机PID参数初始化
-    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
-    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2, 0, 0
+    motor_l.PidInit(&motor_l, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2/0.17, 0, 0
+    motor_r.PidInit(&motor_r, DELTA, 2000.0f, 1000.0f, 0.17, 0, 0);//DELTA, 2000.0f, 1000.0f, 0.2/0.17, 0, 0
     //
     Balance_Init();
 }
@@ -213,6 +218,9 @@ void Control(void)
             {
                 int32_t dL = Encoder_GetDelta(&encL);
                 int32_t dR = Encoder_GetDelta(&encR);
+                // 滤掉单脉冲毛刺 (正常采样周期内至少会有几个脉冲)
+                if (dL == 1 || dL == -1) dL = 0;
+                if (dR == 1 || dR == -1) dR = 0;
                 motor_l.encoder.deltaCount = (int16_t)dL;
                 motor_r.encoder.deltaCount = (int16_t)dR;
                 motor_l.encoder.totalCount += dL;
